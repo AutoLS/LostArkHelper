@@ -45,8 +45,10 @@ main :: ()
 	is_quit: bool;
 	clear_color := make_vector4(0, 0, 0, 1.00);
 	main_tool_active: bool;
+	show_app_metric: bool;
 
 	using lost_ark_helper;
+	lost_ark_helper.clock = init_clock();
 	add_character(*character_page, "Character1", 0);
 	init_income_menu_settings();
 	load_user_data_file();
@@ -141,6 +143,7 @@ main :: ()
 				defer ImGui.EndMenu();
 				if ImGui.MenuItem("Checklist", null) current_tool = .CHARACTER_CHECKLIST;
 				if ImGui.MenuItem("Income", null) current_tool = .INCOME_MENU;
+				ImGui.MenuItem("Debug Metrics", null, *show_app_metric);
 			}
 		}
 
@@ -185,6 +188,8 @@ main :: ()
 			}
 		}
 
+		if show_app_metric then ImGui.ShowMetricsWindow(*show_app_metric);
+
 		if current_tool == 
 		{
 			case .CHARACTER_CHECKLIST;
@@ -197,8 +202,9 @@ main :: ()
 				update_income_menu();
 			}
 		}
-
 		ImGui.End();
+
+		lock_fps(*lost_ark_helper.clock, 60);
 
 		ImGui.Render();
         glViewport(0, 0, xx io.DisplaySize.x, xx io.DisplaySize.y);
@@ -206,5 +212,7 @@ main :: ()
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplSdl_RenderDrawLists(ImGui.GetDrawData());
         SDL_GL_SwapWindow(window);
+
+		update_clock(*lost_ark_helper.clock);
 	} 
 }
