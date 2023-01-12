@@ -12,6 +12,7 @@
 #load "income.jai";
 #load "save.jai";
 #load "util.jai";
+#load "time.jai";
 
 Lost_Ark_Raids :: enum u32
 {
@@ -36,6 +37,7 @@ Lost_Ark_Helper :: struct
     file_handler: File_Handler;
 
     input: Input;
+    clock: Clock;
 }
 
 lost_ark_helper: Lost_Ark_Helper;
