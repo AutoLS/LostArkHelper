@@ -184,8 +184,8 @@ ImGui_ImplSdl_CreateFontsTexture :: () -> bool {
     pixels: *u8;
     width, height: s32;
     bpp: s32;
-    io.Fonts.GetTexDataAsAlpha8(io.Fonts, *pixels, *width, *height, *bpp);
-    //io.Fonts.GetTexDataAsRGBA32(io.Fonts, *pixels, *width, *height);
+    //io.Fonts.GetTexDataAsAlpha8(io.Fonts, *pixels, *width, *height, *bpp);
+    io.Fonts.GetTexDataAsRGBA32(io.Fonts, *pixels, *width, *height);
 
     // Upload texture to graphics system
     last_texture: GLuint;
@@ -196,8 +196,8 @@ ImGui_ImplSdl_CreateFontsTexture :: () -> bool {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     //glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, xx width, xx height, 0, GL_RED, GL_UNSIGNED_BYTE, pixels);
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, xx width, xx height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, xx width, xx height, 0, GL_RED, GL_UNSIGNED_BYTE, pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, xx width, xx height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
     // Store our identifier
     io.Fonts.TexID = xx g_FontTexture;
@@ -237,7 +237,7 @@ ImGui_ImplSdl_CreateDeviceObjects ::() -> bool {
         in vec4 Frag_Color;
         out vec4 Out_Color;
         void main() {
-           Out_Color = Frag_Color * texture( Texture, Frag_UV.st).r;
+           Out_Color = Frag_Color * texture( Texture, Frag_UV);
         }
     END
 
