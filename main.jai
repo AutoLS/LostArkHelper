@@ -53,6 +53,10 @@ main :: ()
 	init_engraving_builder(*engraving_builder);
 	init_income_menu_settings();
 	load_user_data_file();
+	if engraving_builder.presets.count == 0
+    {
+        add_engraving_preset(*engraving_builder, "Preset1");
+    }
 
 	while running
 	{

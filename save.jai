@@ -413,11 +413,6 @@ open_file :: (path: string) -> bool
             }
         }
 
-        if engraving_builder.presets.count == 0
-        {
-            add_engraving_preset(*engraving_builder, "Preset1");
-        }
-
         set_saved();
     }
 
