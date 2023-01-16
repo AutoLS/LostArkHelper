@@ -6,6 +6,8 @@ TAB_ITEM_FLAGS :: ImGui.TabItemFlags;
 TABLE_FLAGS :: ImGui.TableFlags;
 TABLE_COLUMN_FLAGS :: ImGui.TableColumnFlags;
 TABLE_ROW_FLAGS :: ImGui.TableRowFlags;
+DType :: ImGui.DataType;
+STYLE_VAR :: ImGui.StyleVar;
 
 
 label :: (text: string)

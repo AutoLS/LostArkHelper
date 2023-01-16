@@ -221,6 +221,7 @@ save_file :: (path: string)
 {
     using lost_ark_helper.character_page;
     using lost_ark_helper.income_menu;
+    using lost_ark_helper.engraving_builder;
 
     set_working_directory(path_strip_filename(get_path_of_running_executable()));
 
@@ -249,6 +250,7 @@ save_file :: (path: string)
     //append_with_newline(*file_builder, "%", path);
     print_to_builder(*file_builder, "character_count %\n", characters.count);
     print_to_builder(*file_builder, "last_selected_character %\n", selected_character);
+    print_to_builder(*file_builder, "last_selected_preset %\n", selected_preset);
 
     for characters
     {
@@ -263,6 +265,16 @@ save_file :: (path: string)
         append_checked_indices(*file_builder, "is_purchasing_box", purchasing_box);
         print_to_builder(*file_builder, "is_designated %\n", it.is_designated);
         append_with_newline(*file_builder, "[END_CHARACTER]");
+    }
+
+    for presets 
+    {
+        name := to_string(it.name);
+        append_with_newline(*file_builder, "[BEGIN_ENGRAVING_PRESET]");
+        print_to_builder(*file_builder, "preset_name %\n", name);
+        append_array(*file_builder, "engravings", it.engravings);
+        append_array(*file_builder, "engraving_points", it.engraving_points);
+        append_with_newline(*file_builder, "[END_ENGRAVING_PRESET]");
     }
 
     write_entire_file(path, *file_builder);
@@ -357,6 +369,53 @@ open_file :: (path: string) -> bool
                     }
                 } 
             }
+
+            if starts_with(entries[entry_index], "[") &&
+               contains(entries[entry_index], "BEGIN_ENGRAVING_PRESET")
+            {
+                preset: Engraving_Preset;
+                defer array_add(*engraving_builder.presets, preset);
+
+                entry_index += 1;
+                while !starts_with(entries[entry_index], "[") && 
+                      !contains(entries[entry_index], "END_ENGRAVING_PRESET")
+                {
+                    defer entry_index += 1;
+                    preset_data_entry := split(entries[entry_index], " ");
+
+                    if preset_data_entry[0] == 
+                    {
+                        case "preset_name";
+                        {
+                            size := preset_data_entry[1].count+1;
+                            preset.name = alloc(size);
+                            memset(preset.name, 0, size);
+                            memcpy(preset.name, preset_data_entry[1].data, preset_data_entry[1].count);
+                        }
+
+                        case "engravings";
+                        {
+                            for 1 .. preset_data_entry.count-1
+                            {
+                                preset.engravings[it-1] = enum_name_to_value(Engravings, preset_data_entry[it]);
+                            }
+                        }
+
+                        case "engraving_points";
+                        {
+                            for 1 .. preset_data_entry.count-1
+                            {
+                                preset.engraving_points[it-1] = xx string_to_int(preset_data_entry[it]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if engraving_builder.presets.count == 0
+        {
+            add_engraving_preset(*engraving_builder, "Preset1");
         }
 
         set_saved();

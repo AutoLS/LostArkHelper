@@ -50,6 +50,7 @@ main :: ()
 	using lost_ark_helper;
 	lost_ark_helper.clock = init_clock();
 	add_character(*character_page, "Character1", 0);
+	init_engraving_builder(*engraving_builder);
 	init_income_menu_settings();
 	load_user_data_file();
 
@@ -143,6 +144,7 @@ main :: ()
 				defer ImGui.EndMenu();
 				if ImGui.MenuItem("Checklist", null) current_tool = .CHARACTER_CHECKLIST;
 				if ImGui.MenuItem("Income", null) current_tool = .INCOME_MENU;
+				if ImGui.MenuItem("Engraving Builder", null) current_tool = .ENGRAVING_BUILDER;
 				ImGui.MenuItem("Debug Metrics", null, *show_app_metric);
 			}
 		}
@@ -200,6 +202,11 @@ main :: ()
 			case .INCOME_MENU;
 			{
 				update_income_menu();
+			}
+
+			case .ENGRAVING_BUILDER;
+			{
+				update_engraving_builder_page(*engraving_builder);
 			}
 		}
 		ImGui.End();

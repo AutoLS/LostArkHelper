@@ -114,3 +114,8 @@ compare_struct :: ($a : $T, b : T) -> bool
     
     #insert #run build_compare_func(T);
 }
+
+to_2d_index :: (y: int, x: int, nx: int) -> int
+{
+    return y * nx + x;
+}

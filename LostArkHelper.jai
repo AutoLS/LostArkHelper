@@ -5,11 +5,14 @@
 #import "Deep_Copy";
 #import "Hash_Table";
 #import "Math";
+#import "Reflection";
 #load "math.jai";
 #load "input.jai";
+#load "opengl.jai";
 #load "ui.jai";
 #load "character.jai";
 #load "income.jai";
+#load "engraving.jai";
 #load "save.jai";
 #load "util.jai";
 #load "time.jai";
@@ -26,12 +29,14 @@ Lost_Ark_Tools :: enum u32
 {
     CHARACTER_CHECKLIST;
     INCOME_MENU;
+    ENGRAVING_BUILDER;
 }
 
 Lost_Ark_Helper :: struct
 {
     character_page: Character_Page;
     income_menu: Income_Menu;
+    engraving_builder: Engraving_Builder;
     current_tool: Lost_Ark_Tools;
 
     file_handler: File_Handler;
