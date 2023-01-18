@@ -219,84 +219,81 @@ update_engraving_builder_page :: (using engraving_builder: *Engraving_Builder)
         n_row := row_headers.count;
         n_col := NUM_ENGRAVING;
 
-        for row_index: 0 .. n_row
+        ImGui.TableNextRow();
+
+        ImGui.TableSetColumnIndex(0);
+        ImGui.AlignTextToFramePadding();
+        ImGui.Text("Accessory");
+
+        for column_index: 0 .. n_col-1
+        {
+            ImGui.TableSetColumnIndex(xx (column_index+1));
+            name := tprint("Engraving %", column_index+1);
+            ImGui.Text(name);
+            selected_engraving := engraving_names[current_preset.engravings[column_index]];
+            cell: s32 = cast(s32)(column_index);
+            ImGui.PushID(cell);
+            ImGui.PushItemWidth(150);
+            if ImGui.BeginCombo("##cell", selected_engraving)
+            {
+                defer ImGui.EndCombo();
+
+                for engraving_names
+                {
+                    if it_index > 0
+                    {
+                        is_selected := xx current_preset.engravings[column_index] == it_index;
+                        if ImGui.Selectable(it, is_selected) then current_preset.engravings[column_index] = xx it_index;
+
+                        if is_selected then ImGui.SetItemDefaultFocus();
+                    }
+                }
+            }
+            ImGui.PopID();
+
+            button_label := temp_c_string(tprint("Reset##%", column_index));
+            if ImGui.Button(button_label)
+            {
+                for 0 .. n_row-1
+                {
+                    current_preset.engraving_points[to_2d_index(it, column_index, NUM_ENGRAVING)] = 0;
+                }
+                set_unsaved();
+            }
+        }
+        
+
+        for row_index: 0 .. n_row-1
         {
             ImGui.TableNextRow();
+
+            ImGui.TableSetColumnIndex(0);
+            ImGui.Image(cast(*void)accessory_textures[row_index], make_ImVec2(32, 32));
+            ImGui.Text(row_headers[row_index]);
             
-            for column_index: 0 .. n_col
+            for column_index: 0 .. n_col-1
             {
-                ImGui.TableSetColumnIndex(xx column_index);
-                if row_index == 0
+                ImGui.TableSetColumnIndex(xx (column_index+1));
+                step: u8 = 1;
+                data: *u8 = *current_preset.engraving_points[to_2d_index(row_index, column_index, NUM_ENGRAVING)];
+                cell: s32 = cast(s32)(row_index * n_col + column_index);
+                ImGui.PushItemWidth(90);
+                ImGui.PushID(cell);
+                if ImGui.InputScalar("##input", DType.U8, data, *step)
                 {
-                    if column_index == 0 
+                    if row_headers[row_index] ==
                     {
-                        ImGui.AlignTextToFramePadding();
-                        ImGui.Text("Accessory");
-                    }
-                    else
-                    {
-                        name := tprint("Engraving %", column_index);
-                        ImGui.Text(name);
-                        selected_engraving := engraving_names[current_preset.engravings[column_index-1]];
-                        cell: s32 = cast(s32)(row_index * n_col + column_index);
-                        ImGui.PushID(cell);
-                        ImGui.PushItemWidth(150);
-                        if ImGui.BeginCombo("##cell", selected_engraving)
+                        case "Slot 1"; #through;
+                        case "Slot 2";
                         {
-                            defer ImGui.EndCombo();
-
-                            for engraving_names
-                            {
-                                if it_index > 0
-                                {
-                                    is_selected := xx current_preset.engravings[column_index-1] == it_index;
-                                    if ImGui.Selectable(it, is_selected) then current_preset.engravings[column_index-1] = xx it_index;
-
-                                    if is_selected then ImGui.SetItemDefaultFocus();
-                                }
-                            }
+                            Clamp(data, 0, 12);
                         }
-                        ImGui.PopID();
-                        if ImGui.Button("Reset")
-                        {
-                            for 0 .. n_row-1
-                            {
-                                current_preset.engraving_points[to_2d_index(it, column_index-1, NUM_ENGRAVING)] = 0;
-                            }
-                        }
+                        case "Stone"; Clamp(data, 0, 10);
+                        case; Clamp(data, 0, 5);
                     }
+                    set_unsaved();
                 }
-                else
-                {
-                    if column_index == 0
-                    {
-                        ImGui.Image(cast(*void)accessory_textures[row_index-1], make_ImVec2(32, 32));
-                        ImGui.Text(row_headers[row_index-1]);
-                    }
-                    else 
-                    {
-                        step: u8 = 1;
-                        data: *u8 = *current_preset.engraving_points[to_2d_index(row_index-1, column_index-1, NUM_ENGRAVING)];
-                        cell: s32 = cast(s32)(row_index * n_col + column_index);
-                        ImGui.PushItemWidth(90);
-                        ImGui.PushID(cell);
-                        if ImGui.InputScalar("##cell", DType.U8, data, *step)
-                        {
-                            if row_headers[row_index-1] ==
-                            {
-                                case "Slot 1"; #through;
-                                case "Slot 2";
-                                {
-                                    Clamp(data, 0, 12);
-                                }
-                                case "Stone"; Clamp(data, 0, 10);
-                                case; Clamp(data, 0, 5);
-                            }
-                            set_unsaved();
-                        }
-                        ImGui.PopID();
-                    }
-                }
+                ImGui.PopID();
             }
         }
 
