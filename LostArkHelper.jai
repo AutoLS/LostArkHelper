@@ -116,21 +116,13 @@ update_character_page :: (using page: *Character_Page)
     //update_on_reset(page);
     current_character := *characters[selected_character];
 
-    ImGui.SetNextItemWidth(150);
-    if ImGui.BeginCombo("Character Select", characters[selected_character].name)
-    {
-        defer ImGui.EndCombo();
+    character_names: [..] *u8;
+    character_names.allocator = temp;
 
-        for characters
-        {
-            is_selected := selected_character == it_index;
-            if ImGui.Selectable(it.name, is_selected)
-                selected_character = xx it_index;
-            
-            if is_selected
-                ImGui.SetItemDefaultFocus();
-        }
-    }
+    for characters array_add(*character_names, it.name);
+
+    ImGui.SetNextItemWidth(150);
+    combo_box("Character Select", character_names, *selected_character);
     ImGui.SameLine();
     reset_all: bool;
     ImGui.Checkbox("Reset all checklist", *reset_all);

@@ -58,3 +58,17 @@ check_list :: (name: string, items: [] string, data: *bool) -> bool
     return changed;
 }
 
+combo_box :: (label: *u8, items: [] *u8, selected: *s32)
+{
+    if ImGui.BeginCombo(label, items[<< selected])
+    {
+        defer ImGui.EndCombo();
+        for items
+        {
+            is_selected := << selected == it_index;
+            if ImGui.Selectable(it, is_selected) then << selected = xx it_index;
+
+            if is_selected then ImGui.SetItemDefaultFocus();
+        }
+    }
+}

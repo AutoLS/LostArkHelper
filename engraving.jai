@@ -172,18 +172,15 @@ update_engraving_builder_page :: (using engraving_builder: *Engraving_Builder)
     current_preset := *presets[selected_preset];
     ImGui.SetNextItemWidth(150);
 
-    // TODO: Should prob refactor this since it is similar to the code in character page
-    if ImGui.BeginCombo("Preset Select", presets[selected_preset].name)
-    {
-        defer ImGui.EndCombo();
-        for presets
-        {
-            is_selected := selected_preset == it_index;
-            if ImGui.Selectable(it.name, is_selected) then selected_preset = xx it_index;
+    preset_names: [..] *u8;
+    preset_names.allocator = temp;
 
-            if is_selected then ImGui.SetItemDefaultFocus();
-        }
+    for presets 
+    {
+        array_add(*preset_names, it.name);
     }
+
+    combo_box("Preset Select", preset_names, *selected_preset);
 
     if ImGui.Button("Add new")
     {
@@ -234,21 +231,7 @@ update_engraving_builder_page :: (using engraving_builder: *Engraving_Builder)
             cell: s32 = cast(s32)(column_index);
             ImGui.PushID(cell);
             ImGui.PushItemWidth(150);
-            if ImGui.BeginCombo("##cell", selected_engraving)
-            {
-                defer ImGui.EndCombo();
-
-                for engraving_names
-                {
-                    if it_index > 0
-                    {
-                        is_selected := xx current_preset.engravings[column_index] == it_index;
-                        if ImGui.Selectable(it, is_selected) then current_preset.engravings[column_index] = xx it_index;
-
-                        if is_selected then ImGui.SetItemDefaultFocus();
-                    }
-                }
-            }
+            combo_box("##cell", engraving_names, cast(*s32)*current_preset.engravings[column_index]);
             ImGui.PopID();
 
             button_label := temp_c_string(tprint("Reset##%", column_index));
@@ -262,7 +245,6 @@ update_engraving_builder_page :: (using engraving_builder: *Engraving_Builder)
             }
         }
         
-
         for row_index: 0 .. n_row-1
         {
             ImGui.TableNextRow();
