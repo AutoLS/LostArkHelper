@@ -142,8 +142,8 @@ add_engraving_preset :: (using engraving_builder: *Engraving_Builder, name: stri
 {
     preset: Engraving_Preset;
     size := name.count + 1;
-    preset.name = alloc(size);
-    memset(preset.name, 0, size);
+    preset.name = alloc(17);
+    memset(preset.name, 0, 17);
     memcpy(preset.name, name.data, name.count);
     array_add(*presets, preset);
 }
