@@ -1,6 +1,12 @@
 # LostArkHelper
 
-Simple helper tool to keep track of todo things in lost ark and an income calculator<br />
+Simple helper tool for lost ark<br />
+
+**Current features:** <br />
+- Checklist
+- Income calculator
+- Engraving builder
+- Customization preset converter
 
 Here are some screenshots:<br />
 
