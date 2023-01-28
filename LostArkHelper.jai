@@ -16,6 +16,7 @@
 #load "save.jai";
 #load "util.jai";
 #load "time.jai";
+#load "customization.jai";
 
 Lost_Ark_Raids :: enum u32
 {
@@ -30,6 +31,7 @@ Lost_Ark_Tools :: enum u32
     CHARACTER_CHECKLIST;
     INCOME_MENU;
     ENGRAVING_BUILDER;
+    CUSTOMIZATION_CONVERTER;
 }
 
 Lost_Ark_Helper :: struct
@@ -38,6 +40,7 @@ Lost_Ark_Helper :: struct
     income_menu: Income_Menu;
     engraving_builder: Engraving_Builder;
     current_tool: Lost_Ark_Tools;
+    cus_converter_data: Customization_Converter_Data;
 
     file_handler: File_Handler;
 
@@ -46,6 +49,18 @@ Lost_Ark_Helper :: struct
 }
 
 lost_ark_helper: Lost_Ark_Helper;
+
+init_lost_ark_helper :: ()
+{
+    using lost_ark_helper;
+    file_handler.current_opened_save = alloc(DEFAULT_PATH_SIZE);
+    cus_converter_data.file_name_ptr = alloc(DEFAULT_PATH_SIZE);
+    lost_ark_helper.clock = init_clock();
+	add_character(*character_page, "Character1", 0);
+	init_engraving_builder(*engraving_builder);
+	init_income_menu_settings();
+	load_user_data_file();
+}
 
 get_raid_type_from_string :: (raid_str: string) -> Lost_Ark_Raids
 {

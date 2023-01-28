@@ -48,15 +48,7 @@ main :: ()
 	show_app_metric: bool;
 
 	using lost_ark_helper;
-	lost_ark_helper.clock = init_clock();
-	add_character(*character_page, "Character1", 0);
-	init_engraving_builder(*engraving_builder);
-	init_income_menu_settings();
-	load_user_data_file();
-	if engraving_builder.presets.count == 0
-    {
-        add_engraving_preset(*engraving_builder, "Preset1");
-    }
+	init_lost_ark_helper();
 
 	while running
 	{
@@ -149,6 +141,7 @@ main :: ()
 				if ImGui.MenuItem("Checklist", null) current_tool = .CHARACTER_CHECKLIST;
 				if ImGui.MenuItem("Income", null) current_tool = .INCOME_MENU;
 				if ImGui.MenuItem("Engraving Builder", null) current_tool = .ENGRAVING_BUILDER;
+				if ImGui.MenuItem("Preset Converter", null) current_tool = .CUSTOMIZATION_CONVERTER;
 				ImGui.MenuItem("Debug Metrics", null, *show_app_metric);
 			}
 		}
@@ -211,6 +204,11 @@ main :: ()
 			case .ENGRAVING_BUILDER;
 			{
 				update_engraving_builder_page(*engraving_builder);
+			}
+
+			case .CUSTOMIZATION_CONVERTER;
+			{
+				update_customization_converter_menu(*cus_converter_data);
 			}
 		}
 		ImGui.End();

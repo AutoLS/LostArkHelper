@@ -1,12 +1,16 @@
 #import "File";
 #import "File_Utilities";
 
+DEFAULT_PATH_SIZE :: 512;
+
 File_Handler :: struct
 {
     recent_file: string;
     unsaved: bool;
     begin_open_file: bool;
     begin_new_file: bool;
+
+    current_opened_save: *u8;
 }
 
 User_Data_File :: struct
@@ -88,18 +92,25 @@ save_file_dialogue :: ()
     }
 }
 
-open_file_dialogue :: ()
+get_open_file_name :: (filter: *u8, ext: *u8, file_name: *u8, size: s32 = DEFAULT_PATH_SIZE) -> OPENFILENAME(u8)
 {
-    file_name: [128] u8;
     initial_dir := path_strip_filename(get_path_of_running_executable());
     replace_chars(initial_dir, "/", #char "\\");
     file_dialogue: OPENFILENAME(u8);
     file_dialogue.lStructSize = size_of(OPENFILENAME(u8));
-    file_dialogue.lpstrFilter = "Save files (*.sav)\0*.sav\0\0";
-    file_dialogue.lpstrDefExt = "sav";
-    file_dialogue.nMaxFile = 128;
-    file_dialogue.lpstrFile = file_name.data;
+    file_dialogue.lpstrFilter = filter;
+    file_dialogue.lpstrDefExt = ext;
+    file_dialogue.nMaxFile = xx size;
+    file_dialogue.lpstrFile = file_name;
     file_dialogue.lpstrInitialDir = temp_c_string(initial_dir);
+
+    return file_dialogue;
+}
+
+open_file_dialogue :: ()
+{
+    file_dialogue := get_open_file_name("Save files (*.sav)\0*.sav\0\0", "sav", lost_ark_helper.file_handler.current_opened_save);
+
     if GetOpenFileNameA(*file_dialogue)
     {
         open_file(to_string(file_dialogue.lpstrFile));
@@ -110,8 +121,11 @@ new_file :: ()
 {
     using lost_ark_helper;
     array_reset(*character_page.characters);
+    array_reset(*engraving_builder.presets);
     lost_ark_helper.character_page.selected_character = 0;
+    lost_ark_helper.engraving_builder.selected_preset = 0;
     add_character(*character_page, "Character1", 0);
+    add_engraving_preset(*engraving_builder, "Preset1");
     if file_handler.recent_file.data
     {
         free(file_handler.recent_file);
@@ -312,6 +326,7 @@ open_file :: (path: string) -> bool
     {
         lost_ark_helper.file_handler.recent_file = copy_string(path);
         array_reset(*character_page.characters);
+        array_reset(*engraving_builder.presets);
         entries := split(file_data, "\n");
         character_count: int;
         
@@ -411,6 +426,12 @@ open_file :: (path: string) -> bool
                     }
                 }
             }
+        }
+
+        if engraving_builder.presets.count == 0
+        {
+            add_engraving_preset(*engraving_builder, "Preset1");
+            engraving_builder.selected_preset = 0;
         }
 
         set_saved();
