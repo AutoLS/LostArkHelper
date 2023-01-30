@@ -8,6 +8,11 @@ Simple helper tool for lost ark<br />
 - Engraving builder
 - Customization preset converter
 
+**Planned features:** <br />
+- Ability stone calculator
+- Improving engraving builder (Adding reduced abilities and stats)
+- Bingo calculator
+
 Here are some screenshots:<br />
 
 ![LostArkHelper_MeWFcJIL2Q](https://user-images.githubusercontent.com/22582653/215449997-243f6507-6648-4662-8885-ddfacaa4c9f7.png)
