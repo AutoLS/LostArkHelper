@@ -356,7 +356,7 @@ open_file :: (path: string) -> bool
                 character: Character;
                 defer add_character(*character_page, character);
 
-                begin_notes_index = find_index_from_left(file_data, begin_note_string, begin_notes_index);
+                begin_notes_index = find_index_from_left(file_data, begin_note_string, end_notes_index);
 
                 if begin_notes_index != -1
                 {
@@ -370,7 +370,6 @@ open_file :: (path: string) -> bool
                         note_index += 1;
                         notes_cursor += 1;
                     }
-                    begin_notes_index = end_notes_index;
                 }
 
                 entry_index += 1;
