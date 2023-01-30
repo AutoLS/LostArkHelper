@@ -278,6 +278,10 @@ save_file :: (path: string)
         append_checked_indices(*file_builder, "checklist", checks);
         append_checked_indices(*file_builder, "is_purchasing_box", purchasing_box);
         print_to_builder(*file_builder, "is_designated %\n", it.is_designated);
+        len := c_style_strlen(it.notes.data);
+        append_with_newline(*file_builder, "[BEGIN_NOTES]");
+        append_with_newline(*file_builder, to_string(it.notes.data, len));
+        append_with_newline(*file_builder, "[END_NOTES]");
         append_with_newline(*file_builder, "[END_CHARACTER]");
     }
 
@@ -327,8 +331,14 @@ open_file :: (path: string) -> bool
         lost_ark_helper.file_handler.recent_file = copy_string(path);
         array_reset(*character_page.characters);
         array_reset(*engraving_builder.presets);
+
         entries := split(file_data, "\n");
         character_count: int;
+
+        begin_note_string := "[BEGIN_NOTES]";
+        end_note_string := "[END_NOTES]";
+        begin_notes_index: int;
+        end_notes_index: int;
         
         for entry_index : 0 .. entries.count-1
         {
@@ -346,9 +356,25 @@ open_file :: (path: string) -> bool
                 character: Character;
                 defer add_character(*character_page, character);
 
+                begin_notes_index = find_index_from_left(file_data, begin_note_string, begin_notes_index);
+                end_notes_index = find_index_from_left(file_data, end_note_string, begin_notes_index);
+
+                if begin_notes_index != -1
+                {
+                    notes_cursor := begin_notes_index + begin_note_string.count + 1;
+                    note_index := 0;
+
+                    while notes_cursor < end_notes_index
+                    {
+                        character.notes[note_index] = file_data.data[notes_cursor];
+                        note_index += 1;
+                        notes_cursor += 1;
+                    }
+                    begin_notes_index = end_notes_index;
+                }
+
                 entry_index += 1;
-                while !starts_with(entries[entry_index], "[") && 
-                      !contains(entries[entry_index], "END_CHARACTER")
+                while !contains(entries[entry_index], "[END_CHARACTER]")
                 {
                     defer entry_index += 1;
                     character_data_entry := split(entries[entry_index], " ");

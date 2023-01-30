@@ -18,6 +18,7 @@ Character :: struct
     checklist: [#run TODO_LIST.count] bool;
     is_purchasing_box: [#run WEEKLY_RAID_LIST.count] bool;
     is_designated: bool;
+    notes: [65536] u8;
 }
 
 add_character :: (using page: *Character_Page, name: string, item_level: float)
@@ -133,6 +134,10 @@ update_character_page :: (using page: *Character_Page)
         }
     }
     ImGui.EndChild();
+
+    ImGui.Text("Notes");
+    notes_input_flags := IMGUI_INPUT_TEXT_FLAGS.AllowTabInput;
+    if ImGui.InputTextMultiline("##Notes", current_character.notes.data, current_character.notes.count, make_ImVec2(0, ImGui.GetTextLineHeight() * 16), notes_input_flags) then set_unsaved();
 }
 
 update_on_reset :: (using page: *Character_Page)
