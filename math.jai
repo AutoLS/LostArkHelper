@@ -31,6 +31,18 @@ make_ImVec2 :: (x: float, y: float) -> ImGui.ImVec2
     return ret;
 }
 
+make_ImVec4 :: (x: float, y: float, z: float, w: float) -> ImGui.ImVec4
+{
+    ret: ImGui.ImVec4;
+    ret.x = x;
+    ret.y = y;
+    ret.z = z;
+    ret.w = w;
+
+    return ret;
+}
+
+
 round_real_to_int :: (x: float) -> int
 {
     return cast(int)(x + 0.5);
