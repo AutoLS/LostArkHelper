@@ -261,6 +261,16 @@ update_engraving_builder_page :: (using engraving_builder: *Engraving_Builder)
                 cell: s32 = cast(s32)(row_index * n_col + column_index);
                 ImGui.PushItemWidth(90);
                 ImGui.PushID(cell);
+
+                if (<< data) > 0
+                {
+                    r := #run 73.0/255.0;
+                    g := #run 81.0/255.0;
+                    b := #run 89.0/255.0;
+                    cell_bg_color := ImGui.GetColorU32(make_ImVec4(r, g, b, 0.5));
+                    ImGui.TableSetBgColor(ImGui.TableBgTarget.CellBg, cell_bg_color);
+                }
+
                 if ImGui.InputScalar("##input", DType.U8, data, *step)
                 {
                     if row_headers[row_index] ==
