@@ -140,36 +140,3 @@ update_character_page :: (using page: *Character_Page)
     if ImGui.InputTextMultiline("##Notes", current_character.notes.data, current_character.notes.count, make_ImVec2(0, ImGui.GetTextLineHeight() * 16), notes_input_flags) then set_unsaved();
 }
 
-update_on_reset :: (using page: *Character_Page)
-{
-/*
-    current_time := current_time_consensus();
-    current_calendar_time := to_calendar(current_time);
-
-    if current_calendar_time.hour >= 10 && 
-       current_calendar_time.day_of_week_starting_at_0 != last_reset_day 
-    {
-        last_reset_day = current_calendar_time.day_of_week_starting_at_0;
-        for characters
-        {
-            reset_checklist(it.dailies_checklist.data, it.dailies_checklist.count);
-        }
-
-        if current_calendar_time.day_of_week_starting_at_0 == 3
-        {
-            for characters
-            {
-                reset_checklist(it.weekly_raid_checklist.data, it.weekly_raid_checklist.count);
-                reset_checklist(it.weekly_activity_checklist.data, it.weekly_activity_checklist.count);
-            }
-        }
-
-        recent_file := get_recent_file();
-        
-        if recent_file != ""
-        {
-            save_file(recent_file);
-        }
-    }
-*/
-}
