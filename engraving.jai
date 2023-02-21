@@ -121,6 +121,7 @@ Engraving_Builder :: struct
 
 init_engraving_builder :: (using engraving_builder: *Engraving_Builder)
 {
+    add_engraving_preset(engraving_builder, "Preset1");
     enum_info := type_info(Engravings);
     for enum_info.values 
     {
