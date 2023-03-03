@@ -504,7 +504,7 @@ update_total_income_tab :: ()
         ImGui.Text("Total daily gold from mats      ~= %g", rounded_mat_daily_gold);
         ImGui.Text("Total weekly gold from mats     ~= %g", rounded_mat_daily_gold * 7);
         ImGui.Text("Total weekly gold from raids    ~= %g", cast(int)total_raid_gold);
-        ImGui.Text("Total god per week              ~= %g", cast(int)total_raid_gold + (rounded_mat_daily_gold * 7));
+        ImGui.Text("Total gold per week             ~= %g", cast(int)total_raid_gold + (rounded_mat_daily_gold * 7));
 
         ImGui.EndTabItem();
     }
