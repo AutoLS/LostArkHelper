@@ -292,6 +292,10 @@ save_file :: (path: string)
         print_to_builder(*file_builder, "preset_name %\n", name);
         append_array(*file_builder, "engravings", it.engravings);
         append_array(*file_builder, "engraving_points", it.engraving_points);
+        negative_engravings: SOA(Negative_Engraving, 6);
+        AOS_To_SOA(it.negative_engraving_points, *negative_engravings);
+        append_array(*file_builder, "negative_engravings_type", negative_engravings.type);
+        append_array(*file_builder, "negative_engravings_value", negative_engravings.value);
         append_with_newline(*file_builder, "[END_ENGRAVING_PRESET]");
     }
 
@@ -446,6 +450,22 @@ open_file :: (path: string) -> bool
                             for 1 .. preset_data_entry.count-1
                             {
                                 preset.engraving_points[it-1] = xx string_to_int(preset_data_entry[it]);
+                            }
+                        }
+
+                        case "negative_engravings_type";
+                        {
+                            for 1 .. preset_data_entry.count-1
+                            {
+                                preset.negative_engraving_points[it-1].type = enum_name_to_value(Reduction_Type, preset_data_entry[it]);
+                            }
+                        }
+
+                        case "negative_engravings_value";
+                        {
+                            for 1 .. preset_data_entry.count-1
+                            {
+                                preset.negative_engraving_points[it-1].value = xx string_to_int(preset_data_entry[it]);
                             }
                         }
                     }

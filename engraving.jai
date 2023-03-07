@@ -88,6 +88,15 @@ Engravings :: enum u32
     Vital_Point_Hit;
 }
 
+Reduction_Type :: enum u32
+{
+    None;
+    Atk_Speed_Reduction;
+    Mov_Speed_Reduction;
+    Def_Reduction;
+    Atk_Pow_Reduction;
+}
+
 Accessory :: enum u32
 {
     Necklace;
@@ -103,18 +112,25 @@ Accessory :: enum u32
 NUM_ENGRAVING :: 6;
 NUM_ACCESSORY :: #run enum_highest_value(Accessory)+1;
 
+Negative_Engraving :: struct
+{
+    type: Reduction_Type;
+    value: u8;
+}
+
 Engraving_Preset :: struct
 {
     name: *u8;
     engravings: [NUM_ENGRAVING] Engravings;
     engraving_points: [NUM_ACCESSORY*NUM_ENGRAVING] u8;
-    reduced_abilities_points: [5] u8;
+    negative_engraving_points: [6] Negative_Engraving;
 }
 
 Engraving_Builder :: struct 
 {
     presets: [..] Engraving_Preset;
     engraving_names: [#run enum_highest_value(Engravings) + 1] *u8;
+    negative_engraving_names: [#run enum_highest_value(Reduction_Type) + 1] *u8;
     accessory_textures: [#run enum_highest_value(Accessory) + 1] u32;
     selected_preset: s32;
 }
@@ -130,6 +146,16 @@ init_engraving_builder :: (using engraving_builder: *Engraving_Builder)
         engraving_names[it_index] = alloc(name.count+1);
         memset(engraving_names[it_index], 0, name.count+1);
         memcpy(engraving_names[it_index], name.data, name.count);
+    }
+
+    enum_info = type_info(Reduction_Type);
+    for enum_info.values 
+    {
+        name := copy_temporary_string(enum_info.names[it_index]);
+        replace_chars(name, "_", #char " ");
+        negative_engraving_names[it_index] = alloc(name.count+1);
+        memset(negative_engraving_names[it_index], 0, name.count+1);
+        memcpy(negative_engraving_names[it_index], name.data, name.count);
     }
 
     for 0 .. enum_highest_value(Accessory)
@@ -208,7 +234,7 @@ update_engraving_builder_page :: (using engraving_builder: *Engraving_Builder)
 
     ImGui.PushStyleVar(STYLE_VAR.CellPadding, make_ImVec2(10, 5));
     table_flags := TABLE_FLAGS.Borders | TABLE_FLAGS.SizingFixedFit | TABLE_FLAGS.NoHostExtendX;
-    if ImGui.BeginTable("Engraving_Table", 7, table_flags)
+    if ImGui.BeginTable("Engraving_Table", 8, table_flags)
     {
         defer ImGui.EndTable();
 
@@ -246,6 +272,11 @@ update_engraving_builder_page :: (using engraving_builder: *Engraving_Builder)
             }
         }
         
+        { // Negative Engraving
+            ImGui.TableSetColumnIndex(7);
+            ImGui.Text("Negative abilities");
+        }
+
         for row_index: 0 .. n_row-1
         {
             ImGui.TableNextRow();
@@ -287,6 +318,31 @@ update_engraving_builder_page :: (using engraving_builder: *Engraving_Builder)
                     set_unsaved();
                 }
                 ImGui.PopID();
+            }
+
+            { // Negative Engraving
+                ImGui.TableSetColumnIndex(7);
+                if row_headers[row_index] == 
+                {
+                    case "Necklace"; #through;
+                    case "Earring 1"; #through;
+                    case "Earring 2"; #through;
+                    case "Ring 1"; #through;
+                    case "Ring 2"; #through;
+                    case "Stone";
+                    {
+                        ImGui.PushItemWidth(120);
+                        engraving_index := ifx row_index >= 0 && row_index < 5 then row_index else 5;
+                        step: u8 = 1;
+                        cb_label := tprint("##negative_engraving_selection%", engraving_index);
+                        input_label := tprint("##negative_engraving_value%", engraving_index);
+                        combo_box(temp_c_string(cb_label), negative_engraving_names, cast(*s32)*current_preset.negative_engraving_points[engraving_index].type);
+                        if ImGui.InputScalar(temp_c_string(input_label), DType.U8, *current_preset.negative_engraving_points[engraving_index].value, *step)
+                        {
+                            set_unsaved();
+                        }
+                    }
+                } 
             }
         }
 
