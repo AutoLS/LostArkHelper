@@ -1,3 +1,37 @@
+SOA :: struct(T: Type, count: int) {
+    #insert -> string 
+    {
+        t_info := type_info(T);
+        builder: String_Builder;  
+        defer free_buffers(*builder);
+        for fields: t_info.members 
+        {
+            print_to_builder(*builder, "  %1: [%2] type_of(T.%1);\n", fields.name, count);
+        }
+        result := builder_to_string(*builder);
+        return result;
+    }
+}
+
+AOS_To_SOA :: (struct_arr: [] $T, soa: *$Y)
+{
+    #insert -> string 
+    {
+        t_info := type_info(T);
+        builder: String_Builder;  
+        defer free_buffers(*builder);
+        print_to_builder(*builder, "for struct_arr\n");
+        print_to_builder(*builder, "{\n");
+        for fields, fields_index: t_info.members 
+        {
+            print_to_builder(*builder, "soa.%1[it_index] = struct_arr[it_index].%1;\n", fields.name);
+        }
+        print_to_builder(*builder, "}\n");
+        result := builder_to_string(*builder);
+        return result;
+    }
+}
+
 append_with_newline :: (builder: *String_Builder, str: string, args: .. Any)
 {
     text := join(str, "\n");
