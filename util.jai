@@ -1,4 +1,5 @@
-SOA :: struct(T: Type, count: int) {
+SOA :: struct(T: Type, count: int) 
+{
     #insert -> string 
     {
         t_info := type_info(T);
@@ -13,18 +14,18 @@ SOA :: struct(T: Type, count: int) {
     }
 }
 
-AOS_To_SOA :: (struct_arr: [] $T, soa: *$Y)
+AOS_To_SOA :: (aos: [] $T, soa: *$Y)
 {
     #insert -> string 
     {
         t_info := type_info(T);
         builder: String_Builder;  
         defer free_buffers(*builder);
-        print_to_builder(*builder, "for struct_arr\n");
+        print_to_builder(*builder, "for aos\n");
         print_to_builder(*builder, "{\n");
         for fields, fields_index: t_info.members 
         {
-            print_to_builder(*builder, "soa.%1[it_index] = struct_arr[it_index].%1;\n", fields.name);
+            print_to_builder(*builder, "soa.%1[it_index] = aos[it_index].%1;\n", fields.name);
         }
         print_to_builder(*builder, "}\n");
         result := builder_to_string(*builder);
