@@ -1,7 +1,7 @@
 #import "File";
 #import "File_Utilities";
 
-DEFAULT_PATH_SIZE :: 512;
+DEFAULT_PATH_SIZE :: 1024;
 
 File_Handler :: struct
 {
