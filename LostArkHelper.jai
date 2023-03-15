@@ -55,6 +55,8 @@ init_lost_ark_helper :: ()
     using lost_ark_helper;
     file_handler.current_opened_save = alloc(DEFAULT_PATH_SIZE);
     cus_converter_data.file_name_ptr = alloc(DEFAULT_PATH_SIZE);
+    memset(cus_converter_data.file_name_ptr, 0, DEFAULT_PATH_SIZE);
+    memset(file_handler.current_opened_save, 0, DEFAULT_PATH_SIZE);
     lost_ark_helper.clock = init_clock();
 	add_character(*character_page, "Character1", 0);
 	init_engraving_builder(*engraving_builder);
