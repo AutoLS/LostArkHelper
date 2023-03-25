@@ -312,8 +312,9 @@ initiate_save_file :: ()
     }
     else
     {
-        save_user_data(recent_file);
-        save_file(recent_file);
+        path := copy_temporary_string(recent_file);
+        save_user_data(path);
+        save_file(path);
     }
 }
 
