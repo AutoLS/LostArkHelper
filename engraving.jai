@@ -313,7 +313,7 @@ update_engraving_builder_page :: (using engraving_builder: *Engraving_Builder)
                             Clamp(data, 0, 12);
                         }
                         case "Stone"; Clamp(data, 0, 10);
-                        case; Clamp(data, 0, 5);
+                        case; Clamp(data, 0, 6);
                     }
                     set_unsaved();
                 }
