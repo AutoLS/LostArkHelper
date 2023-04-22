@@ -39,6 +39,7 @@ Engravings :: enum u32
     Firepower_Enhancement;
     First_Intention;
     Fortitude;
+    Full_Bloom;
     Gravity_Training;
     Grudge;
     Heavy_Armor;
@@ -71,6 +72,7 @@ Engravings :: enum u32
     Propulsion;
     Rage_Hammer;
     Raid_Captain;
+    Recurrence;
     Reflux;
     Remaining_Energy;
     Robust_Spirit;
