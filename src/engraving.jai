@@ -68,8 +68,10 @@ Engravings :: enum u32
     Pinnacle;
     Pistoleer;
     Precise_Dagger;
+    Predator;
     Preemptive_Strike;
     Propulsion;
+    Punisher;
     Rage_Hammer;
     Raid_Captain;
     Recurrence;
@@ -218,6 +220,14 @@ update_engraving_builder_page :: (using engraving_builder: *Engraving_Builder)
         set_unsaved();
     }
     ImGui.SameLine();
+    if ImGui.Button("Duplicate")
+    {
+        current_preset_copy := << current_preset;
+        current_preset_copy.name = alloc(17);
+        memcpy(current_preset_copy.name, current_preset.name, 17);
+        array_insert_at(*presets, current_preset_copy, selected_preset);
+        set_unsaved();
+    }
     if ImGui.Button("Delete")
     {
         remove_preset(engraving_builder);
