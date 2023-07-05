@@ -140,6 +140,7 @@ main :: ()
 				defer ImGui.EndMenu();
 				if ImGui.MenuItem("Checklist", null) current_tool = .CHARACTER_CHECKLIST;
 				if ImGui.MenuItem("Income", null) current_tool = .INCOME_MENU;
+				if ImGui.MenuItem("Raids", null) current_tool = .RAIDS_SETTINGS_MENU;
 				if ImGui.MenuItem("Engraving Builder", null) current_tool = .ENGRAVING_BUILDER;
 				if ImGui.MenuItem("Preset Converter", null) current_tool = .CUSTOMIZATION_CONVERTER;
 				ImGui.MenuItem("Debug Metrics", null, *show_app_metric);
@@ -199,6 +200,11 @@ main :: ()
 			case .INCOME_MENU;
 			{
 				update_income_menu();
+			}
+
+			case .RAIDS_SETTINGS_MENU;
+			{
+				update_raids_settings_menu();
 			}
 
 			case .ENGRAVING_BUILDER;
