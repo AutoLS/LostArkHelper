@@ -6,11 +6,13 @@
 #import "Hash_Table";
 #import "Math";
 #import "Reflection";
+#import "JSON";
 #load "math.jai";
 #load "input.jai";
 #load "opengl.jai";
 #load "ui.jai";
 #load "character.jai";
+#load "raids.jai";
 #load "income.jai";
 #load "engraving.jai";
 #load "save.jai";
@@ -30,6 +32,7 @@ Lost_Ark_Tools :: enum u32
 {
     CHARACTER_CHECKLIST;
     INCOME_MENU;
+    RAIDS_SETTINGS_MENU;
     ENGRAVING_BUILDER;
     CUSTOMIZATION_CONVERTER;
 }
@@ -38,6 +41,7 @@ Lost_Ark_Helper :: struct
 {
     character_page: Character_Page;
     income_menu: Income_Menu;
+    raids_settings: Raids_Settings_Menu;
     engraving_builder: Engraving_Builder;
     current_tool: Lost_Ark_Tools;
     cus_converter_data: Customization_Converter_Data;
