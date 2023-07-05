@@ -1,4 +1,4 @@
-ilv_breakpoints := float.[1340, 1370, 1385, 1400, 1415, 1430, 1445, 1460, 1475, 1490, 1520];
+ilv_breakpoints := float.[1340, 1370, 1385, 1400, 1415, 1430, 1445, 1460, 1475, 1490, 1520, 1540, 1550, 1560];
 RAID_LIST_STRINGS := string.["Oreha's Well", "Argos", "Valtan N", "Valtan H", "Vykas N", "Vykas H", "Kakul-Saydon", "Brelshaza"];
 MATERIAL_LIST_STRINGS := string.["Guardian Stones", "Destroyer Stones", "Leapstones", "Greater Leapstones", "Protection Stones", "Obliteration Stones", "Marvelous Leapstones"];
 
@@ -47,13 +47,13 @@ init_income_menu_settings :: ()
     materials_prices[Material.obliteration_stone] = 0.8;
     materials_prices[Material.marvelous_leapstone] = 135;
 
-    table_add(*materials_storage, "Guardian Stones", int.[400, 500, 550, 600, 650, 700, 750, 800, 850, 0, 0]);
-    table_add(*materials_storage, "Protection Stones", int.[0, 0, 0, 0, 0, 0, 0, 0, 0, 500, 700]);
-    table_add(*materials_storage, "Destroyer Stones", int.[133, 167, 183, 200, 217, 233, 250, 267, 300, 0, 0]);
-    table_add(*materials_storage, "Obliteration Stones", int.[0, 0, 0, 0, 0, 0, 0, 0, 0, 250, 300]);
-    table_add(*materials_storage, "Leapstones", int.[7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-    table_add(*materials_storage, "Greater Leapstones", int.[0, 6, 6, 6, 10, 10, 10, 14, 14, 0, 0]);
-    table_add(*materials_storage, "Marvelous Leapstones", int.[0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 10]);
+    table_add(*materials_storage, "Guardian Stones", int.[400, 500, 550, 600, 650, 700, 750, 800, 850, 0, 0, 0, 0, 0]);
+    table_add(*materials_storage, "Protection Stones", int.[0, 0, 0, 0, 0, 0, 0, 0, 0, 500, 700, 750, 750, 800]);
+    table_add(*materials_storage, "Destroyer Stones", int.[133, 167, 183, 200, 217, 233, 250, 267, 300, 0, 0, 0, 0, 0]);
+    table_add(*materials_storage, "Obliteration Stones", int.[0, 0, 0, 0, 0, 0, 0, 0, 0, 250, 300, 320, 320, 350]);
+    table_add(*materials_storage, "Leapstones", int.[7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    table_add(*materials_storage, "Greater Leapstones", int.[0, 6, 6, 6, 10, 10, 10, 14, 14, 0, 0, 0, 0, 0]);
+    table_add(*materials_storage, "Marvelous Leapstones", int.[0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 10, 14, 14, 14]);
 }
 
 update_total_income :: ()
@@ -219,7 +219,7 @@ update_settings_tab :: ()
             }
         }
         ImGui.NewLine();
-        if ImGui.BeginTable("Raid_Gold_Settings_Table", 2, flags, make_ImVec2(400, 224))
+        /* if ImGui.BeginTable("Raid_Gold_Settings_Table", 2, flags, make_ImVec2(400, 224))
         {
             defer ImGui.EndTable();
 
@@ -250,6 +250,7 @@ update_settings_tab :: ()
                 }
             }
         }
+        */
         ImGui.SameLine();
         if ImGui.BeginChild("Designated Characters Checklist", make_ImVec2(300, 200))
         {
@@ -380,21 +381,23 @@ update_materials_income_tab :: ()
 update_raids_income_tab :: ()
 {
     using lost_ark_helper.income_menu;
+    using lost_ark_helper.raids_settings;
+    using lost_ark_helper.character_page;
     if (ImGui.BeginTabItem("Raids income"))
     {
-        flags := TABLE_FLAGS.Borders | TABLE_FLAGS.RowBg | TABLE_FLAGS.SizingFixedSame;
-        gold_total: [RAID_LIST_STRINGS.count] float;
-        if ImGui.BeginTable("RaidsIncomeTable", 2 + RAID_LIST_STRINGS.count, flags)
+        flags := TABLE_FLAGS.Borders | TABLE_FLAGS.RowBg | TABLE_FLAGS.SizingFixedSame | TABLE_FLAGS.ScrollX | TABLE_FLAGS.ScrollY;
+        designated_count := get_designated_count(*lost_ark_helper.character_page);
+        n_columns: s32 = xx (1 + designated_count);
+        if ImGui.BeginTable("RaidsIncomeTable", n_columns, flags)
         {
             defer ImGui.EndTable();
 
             column_headers: [..] string;
             column_headers.allocator = temp;
-            array_add(*column_headers, "Character");
-            array_add(*column_headers, "Item Level");
-            for RAID_LIST_STRINGS
+            array_add(*column_headers, "Source");
+            for characters
             {
-                array_add(*column_headers, it);
+                if it.is_designated then array_add(*column_headers, tprint("% [%]", to_string(it.name), it.item_level));
             }
 
             for column_headers 
@@ -402,93 +405,54 @@ update_raids_income_tab :: ()
                 ImGui.TableSetupColumn(temp_c_string(it), TABLE_COLUMN_FLAGS.DefaultSort);
             }
             ImGui.TableHeadersRow();
-
-            using lost_ark_helper.character_page;
-            for *c, row_index: characters
+            ImGui.TableNextRow();
+            checkbox_id: s32 = 0;
+            row_index := 0;
+            total_raid_income: [..] int;
+            total_raid_income.allocator = temp;
+            array_resize(*total_raid_income, designated_count);
+            for raid, raid_index : raids
             {
-                ImGui.TableNextRow(TABLE_ROW_FLAGS.None, 24);
-                for col, col_index: column_headers 
+                for gate, gate_index : raid.gate_info
                 {
-                    cell: s32 = xx (row_index * column_headers.count + col_index);
-                    ImGui.TableSetColumnIndex(xx col_index);
-                    if col ==
+                    column_index: s32 = 0;
+                    ImGui.TableSetColumnIndex(column_index);
+                    ImGui.Text(tprint("% Gate % - (%g)", raid.name, gate_index + 1, gate.gold_income));
+                    for c, c_index : characters
                     {
-                        case "Character"; ImGui.Text(to_string(c.name));
-                        case "Item Level"; ImGui.Text(tprint("%", c.item_level));
-                        case; 
+                        if c.is_designated
                         {
-                            gold := ifx c.is_designated then get_raid_income(col_index-2, c.item_level, false) else 0;
-                            gold_total[col_index-2] += gold;
-                            ImGui.Text(tprint("%g", gold));
+                            column_index += 1;
+                            ImGui.TableSetColumnIndex(column_index);
+                            if c.item_level >= xx gate.ilv_requirement
+                            {
+                                total_raid_income[column_index-1] += gate.gold_income;
+                                label := temp_c_string(tprint("box? - (%g)##%", gate.chest_cost, checkbox_id));
+                                if ImGui.Checkbox(label, *c.is_purchasing_box[row_index]) then set_unsaved();
+                                if c.is_purchasing_box[row_index]
+                                {
+                                    total_raid_income[column_index-1] -= gate.chest_cost;
+                                }
+                            }
+                            checkbox_id += 1;
                         }
                     }
+                    row_index += 1;
+                    if raid_index == raids.count-1 && gate_index == raid.gate_info.count-1
+                    then ImGui.TableNextRow(TABLE_ROW_FLAGS.None, 24);
+                    else ImGui.TableNextRow();
                 }
             }
-            ImGui.TableNextRow(TABLE_ROW_FLAGS.None, 24);
-            ImGui.TableNextRow(TABLE_ROW_FLAGS.None, 24);
-            ImGui.TableSetColumnIndex(0);
-            ImGui.TableSetColumnIndex(1);
-            ImGui.Text("Total");
-            last_row_index: s32 = 2;
-            total_raid_gold = 0;
-            for gold_total
-            {
-                ImGui.TableSetColumnIndex(last_row_index);
-                ImGui.Text("%g", it);
-                total_raid_gold += it;
-                last_row_index += 1;
-            }
-/*
-            column_headers := string.["Character", "Item Level", "Abyss Dungeons", "Argos", "Valtan", "Vykas"];
 
-            for column_headers 
-            {
-                ImGui.TableSetupColumn(temp_c_string(it), TABLE_COLUMN_FLAGS.DefaultSort);
-            }
-            ImGui.TableHeadersRow();
-            
-            using lost_ark_helper.character_page;
-            for *c, row_index: characters
-            {
-                ImGui.TableNextRow(TABLE_ROW_FLAGS.None, 24);
-                for col, col_index: column_headers
-                {
-                    cell: s32 = xx (row_index * column_headers.count + col_index);
-                    label := temp_c_string(tprint("box?##%", cell));
-                    ImGui.TableSetColumnIndex(xx col_index);
-                    if col ==
-                    {
-                        case "Character"; ImGui.Text(to_string(c.name));
-                        case "Item Level"; ImGui.Text(tprint("%", c.item_level));
-                        case; 
-                        {
-                            raid := get_raid_type_from_string(col);
-                            box := c.is_purchasing_box[col_index-2];
-                            gold := ifx c.is_designated then get_raid_income(raid, c.item_level, box) else 0;
-                            gold_total[col_index-2] += gold;
-                            ImGui.Text(tprint("%g", gold));
-                            ImGui.SameLine(80);
-                            if ImGui.Checkbox(label, *c.is_purchasing_box[col_index-2])
-                            then set_unsaved();
-                        }
-                    }
-                }
-            }
-            ImGui.TableNextRow(TABLE_ROW_FLAGS.None, 24);
             ImGui.TableNextRow(TABLE_ROW_FLAGS.None, 24);
             ImGui.TableSetColumnIndex(0);
-            ImGui.TableSetColumnIndex(1);
             ImGui.Text("Total");
-            last_row_index: s32 = 2;
-            total_raid_gold = 0;
-            for gold_total
+
+            for 1 .. n_columns-1 
             {
-                ImGui.TableSetColumnIndex(last_row_index);
-                ImGui.Text("%g", it);
-                total_raid_gold += it;
-                last_row_index += 1;
+                ImGui.TableSetColumnIndex(it);
+                ImGui.Text(tprint("%g", total_raid_income[it-1]));
             }
-*/
         }
         ImGui.EndTabItem();
     }
