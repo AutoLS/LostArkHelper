@@ -16,7 +16,7 @@ Character :: struct
     name: *u8;
     item_level: float;
     checklist: [#run TODO_LIST.count] bool;
-    is_purchasing_box: [#run WEEKLY_RAID_LIST.count] bool;
+    is_purchasing_box: [..] bool;
     is_designated: bool;
     notes: [65536] u8;
 }
