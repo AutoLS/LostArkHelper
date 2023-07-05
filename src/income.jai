@@ -61,7 +61,6 @@ update_total_income :: ()
     using lost_ark_helper.income_menu;
 
     total_material_daily_gold = 0;
-    total_raid_gold = 0;
     for c, c_index : lost_ark_helper.character_page.characters
     {
         ilv_index := get_ilv_breakpoint_index(c.item_level);
@@ -71,13 +70,6 @@ update_total_income :: ()
             {
                 material, found := table_find(*materials_storage, MATERIAL_LIST_STRINGS[it_index]);
                 if found then total_material_daily_gold += material[ilv_index] * it;
-            }
-            for raid: 0 .. RAID_LIST_STRINGS.count-1
-            {
-                if c.is_designated
-                {
-                    total_raid_gold += get_raid_income(raid, c.item_level, false);
-                }
             }
         }
     }
@@ -408,6 +400,7 @@ update_raids_income_tab :: ()
             ImGui.TableNextRow();
             checkbox_id: s32 = 0;
             row_index := 0;
+            total_raid_gold = 0;
             total_raid_income: [..] int;
             total_raid_income.allocator = temp;
             array_resize(*total_raid_income, designated_count);
@@ -452,6 +445,7 @@ update_raids_income_tab :: ()
             {
                 ImGui.TableSetColumnIndex(it);
                 ImGui.Text(tprint("%g", total_raid_income[it-1]));
+                total_raid_gold += total_raid_income[it-1];
             }
         }
         ImGui.EndTabItem();
@@ -482,7 +476,7 @@ update_income_menu :: ()
         update_settings_tab();
         update_materials_income_tab();
         update_raids_income_tab();
-        update_total_income_tab();
+        //update_total_income_tab();
         
         ImGui.EndTabBar();
     }
