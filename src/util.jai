@@ -154,3 +154,13 @@ to_2d_index :: (y: int, x: int, nx: int) -> int
 {
     return y * nx + x;
 }
+
+json_get :: (json_val: JSON_Value, key: string, expected_type: JSON_Type) -> JSON_Value 
+{
+    assert(json_val.type == .OBJECT);
+    table := json_val.object;
+    val, success := table_find(table, key);
+    assert(success);
+    assert(val.type == expected_type);
+    return val;
+}
