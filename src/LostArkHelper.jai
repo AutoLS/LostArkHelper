@@ -20,6 +20,10 @@
 #load "time.jai";
 #load "customization.jai";
 
+/* TODO: Maybe convert save files to json? 
+
+*/
+
 Lost_Ark_Raids :: enum u32
 {
     Abyss_Dungeons;
