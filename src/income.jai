@@ -392,6 +392,7 @@ update_raids_income_tab :: ()
                 if it.is_designated then array_add(*column_headers, tprint("% [%]", to_string(it.name), it.item_level));
             }
 
+            ImGui.TableSetupScrollFreeze(1, 1);
             for column_headers 
             {
                 ImGui.TableSetupColumn(temp_c_string(it), TABLE_COLUMN_FLAGS.DefaultSort);
