@@ -68,6 +68,7 @@ update_raids_settings_menu :: ()
                 for lost_ark_helper.character_page.characters
                 {
                     array_resize(*it.is_purchasing_box, total_gates);
+                    array_resize(*it.is_skipping, total_gates);
                 }
                 selected_raid = xx (raids.count-1);
                 set_unsaved();

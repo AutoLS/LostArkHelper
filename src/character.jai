@@ -17,6 +17,7 @@ Character :: struct
     item_level: float;
     checklist: [#run TODO_LIST.count] bool;
     is_purchasing_box: [..] bool;
+    is_skipping: [..] bool;
     is_designated: bool;
     notes: [65536] u8;
 }

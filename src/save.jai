@@ -302,12 +302,14 @@ save_file :: (path: string)
         name := to_string(it.name);
         checks := get_checked_indices(it.checklist);
         purchasing_box := get_checked_indices(it.is_purchasing_box);
+        skipping := get_checked_indices(it.is_skipping);
 
         append_with_newline(*file_builder, "[BEGIN_CHARACTER]");
         print_to_builder(*file_builder, "character_name %\n", name);
         print_to_builder(*file_builder, "item_level %\n", it.item_level);
         append_checked_indices(*file_builder, "checklist", checks);
         append_checked_indices(*file_builder, "is_purchasing_box", purchasing_box);
+        append_checked_indices(*file_builder, "is_skipping", skipping);
         print_to_builder(*file_builder, "is_designated %\n", it.is_designated);
         len := c_style_strlen(it.notes.data);
         append_with_newline(*file_builder, "[BEGIN_NOTES]");
@@ -390,6 +392,8 @@ open_file :: (path: string) -> bool
                contains(entries[entry_index], "BEGIN_CHARACTER")
             {
                 character: Character;
+                array_resize(*character.is_purchasing_box, lost_ark_helper.raids_settings.total_gates);
+                array_resize(*character.is_skipping, lost_ark_helper.raids_settings.total_gates);
                 defer add_character(*character_page, character);
 
                 begin_notes_index = find_index_from_left(file_data, begin_note_string, end_notes_index);
@@ -434,8 +438,12 @@ open_file :: (path: string) -> bool
 
                         case "is_purchasing_box";
                         {
-                            array_resize(*character.is_purchasing_box, lost_ark_helper.raids_settings.total_gates);
                             set_checklist_checked(character_data_entry, character.is_purchasing_box);
+                        }
+
+                        case "is_skipping";
+                        {
+                            set_checklist_checked(character_data_entry, character.is_skipping);
                         }
 
                         case "is_designated";

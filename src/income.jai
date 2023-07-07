@@ -419,12 +419,19 @@ update_raids_income_tab :: ()
                             ImGui.TableSetColumnIndex(column_index);
                             if c.item_level >= xx gate.ilv_requirement
                             {
-                                total_raid_income[column_index-1] += gate.gold_income;
-                                label := temp_c_string(tprint("box? - (%g)##%", gate.chest_cost, checkbox_id));
-                                if ImGui.Checkbox(label, *c.is_purchasing_box[row_index]) then set_unsaved();
-                                if c.is_purchasing_box[row_index]
+                                buy_chest_label := temp_c_string(tprint("box? - (%g)##%", gate.chest_cost, checkbox_id));
+                                is_skipping_label := temp_c_string(tprint("skip?##%", checkbox_id));
+                                if ImGui.Checkbox(buy_chest_label, *c.is_purchasing_box[row_index]) then set_unsaved();
+                                ImGui.SameLine();
+                                if ImGui.Checkbox(is_skipping_label, *c.is_skipping[row_index]) then set_unsaved();
+
+                                if !c.is_skipping[row_index]
                                 {
-                                    total_raid_income[column_index-1] -= gate.chest_cost;
+                                    total_raid_income[column_index-1] += gate.gold_income;
+                                    if c.is_purchasing_box[row_index]
+                                    {
+                                        total_raid_income[column_index-1] -= gate.chest_cost;
+                                    }
                                 }
                             }
                             checkbox_id += 1;
