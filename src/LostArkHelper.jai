@@ -7,6 +7,8 @@
 #import "Math";
 #import "Reflection";
 #import "JSON";
+#import "Curl";
+#import "Sort";
 #load "math.jai";
 #load "input.jai";
 #load "opengl.jai";
@@ -19,6 +21,7 @@
 #load "util.jai";
 #load "time.jai";
 #load "customization.jai";
+#load "network.jai";
 
 /* TODO: Maybe convert save files to json? 
 
@@ -54,6 +57,7 @@ Lost_Ark_Helper :: struct
 
     input: Input;
     clock: Clock;
+    curl_handle: *CURL;
 }
 
 lost_ark_helper: Lost_Ark_Helper;
@@ -61,6 +65,8 @@ lost_ark_helper: Lost_Ark_Helper;
 init_lost_ark_helper :: ()
 {
     using lost_ark_helper;
+    curl_handle = curl_easy_init();
+    assert(curl_handle != null);
     file_handler.current_opened_save = alloc(DEFAULT_PATH_SIZE);
     cus_converter_data.file_name_ptr = alloc(DEFAULT_PATH_SIZE);
     memset(cus_converter_data.file_name_ptr, 0, DEFAULT_PATH_SIZE);
