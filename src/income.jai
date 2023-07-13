@@ -27,7 +27,7 @@ MATERIAL_COUNT :: #run enum_highest_value(Material)+1;
 Income_Menu :: struct
 {
     selected_category: s32;
-    live_data: [#run enum_highest_value(Item_Category)+1] JSON_Value;
+    items_data: [#run enum_highest_value(Item_Category)+1][..] Market_Item;
     items_prices: [#run enum_highest_value(Item_Category)+1] Table(string, float);
     materials_prices: [MATERIAL_COUNT] float;
     materials_storage: Table(string, [ilv_breakpoints.count] int);
@@ -81,21 +81,31 @@ get_items_live_data :: ()
 parse_items_live_data :: (json_str: string, table: *Table(string, float), category: Item_Category)
 {
     using lost_ark_helper.income_menu;
-    success, result := json_parse_string(json_str);
-    if success
+    items, ok, err := JSON.from_json_string([..] Market_Item, json_str);
+    if ok  
     {
-        live_data[category] = result;
-        if result.type == .ARRAY
+        items_data[category] = items;
+        for items_data[category]
         {
-            for result.array 
-            {
-                name := json_get(it, "name", .STRING).str;
-                price := json_get(it, "lowPrice", .NUMBER).number;
-
-                table_set(table, name, xx price);
-            }
+            table_set(table, it.name, xx it.low_price);
         }
     }
+    else print("err: %\n", err);
+
+    // success, result := json_parse_string(json_str);
+    // if success
+    // {
+    //     if result.type == .ARRAY
+    //     {
+    //         for result.array 
+    //         {
+    //             name := json_get(it, "name", .STRING).str;
+    //             price := json_get(it, "lowPrice", .NUMBER).number;
+
+    //             table_set(table, name, xx price);
+    //         }
+    //     }
+    // }
 }
 
 update_total_income :: ()
