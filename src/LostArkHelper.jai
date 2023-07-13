@@ -7,6 +7,7 @@
 #import "Math";
 #import "Reflection";
 #import "JSON";
+JSON :: #import "JSON_Plus";
 #import "Curl";
 #import "Sort";
 #load "math.jai";
@@ -22,6 +23,7 @@
 #load "time.jai";
 #load "customization.jai";
 #load "network.jai";
+#load "itemAPI.jai";
 
 /* TODO: Maybe convert save files to json? 
 
