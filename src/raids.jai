@@ -21,6 +21,13 @@ Raids_Settings_Menu :: struct
     total_gates: s32;
 }
 
+get_total_gates :: (raids: [..] Raid) -> s32
+{
+    n: s32;
+    for raids { n += it.n_gates; }
+    return n;
+}
+
 update_raids_settings_menu :: ()
 {
     using lost_ark_helper.raids_settings;
