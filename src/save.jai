@@ -168,30 +168,8 @@ load_user_data_file :: ()
     if file_exists("data/raids_data.json")
     {
         using lost_ark_helper.raids_settings;
-        ok, result := json_parse_file("data/raids_data.json");
-        if ok
-        {
-            if result.type == .ARRAY
-            {
-                for raids_data : result.array
-                {
-                    raid: Raid;
-                    raid.name = json_get(raids_data, "name", .STRING).str;
-                    raid.n_gates = xx json_get(raids_data, "n_gates", .NUMBER).number;
-                    gate_info_data := json_get(raids_data, "gate_info", .ARRAY).array;
-                    total_gates += xx raid.n_gates;
-                    for gate_info_data
-                    {
-                        gate_info: Gate_Info;
-                        gate_info.gold_income = xx json_get(it, "gold_income", .NUMBER).number;
-                        gate_info.chest_cost = xx json_get(it, "chest_cost", .NUMBER).number;
-                        gate_info.ilv_requirement = xx json_get(it, "ilv_requirement", .NUMBER).number;
-                        array_add(*raid.gate_info, gate_info);
-                    }
-                    array_add(*raids, raid);
-                }
-            }
-        }
+        raids=, ok:, err := JSON.from_json_file([..] Raid, "data/raids_data.json");
+        if ok then total_gates = get_total_gates(raids);
     }
     if file_exists("data/user.dat")
 	{
