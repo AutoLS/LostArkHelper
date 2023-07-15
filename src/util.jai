@@ -33,6 +33,18 @@ AOS_To_SOA :: (aos: [] $T, soa: *$Y)
     }
 }
 
+get_type :: (type: *Type_Info) -> Type 
+{
+    if type.type == 
+    {
+        case .STRING; return string;
+        case .FLOAT; return float;
+        case .INTEGER; return int;
+        case .BOOL; return bool;
+        case; return void;
+    }
+}
+
 append_with_newline :: (builder: *String_Builder, str: string, args: .. Any)
 {
     text := join(str, "\n");
