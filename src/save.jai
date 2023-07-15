@@ -147,8 +147,6 @@ save_user_data :: (path: string)
     init_string_builder(*user_data_builder);
     print_to_builder(*user_data_builder, "recent_file %\n", path);
     print_to_builder(*user_data_builder, "last_reset_day %\n", now.day_of_week_starting_at_0);
-    append_array(*user_data_builder, "material_prices", materials_prices);
-    append_array(*user_data_builder, "raid_gold_income", raid_gold_income);
     for materials_storage
     {
         key, value := it_index, it;
@@ -207,21 +205,6 @@ load_user_data_file :: ()
                     {
                         last_day := string_to_int(current_entry[1]);
                         last_reset_day = last_day;
-                    }
-                    case "material_prices";
-                    {
-                        for i : 1 .. current_entry.count-1
-                        {
-                            materials_prices[i-1] = string_to_float(current_entry[i]);
-                        }
-                    }
-                    case "raid_gold_income";
-                    {
-                        
-                        for i : 1 .. current_entry.count-1
-                        {
-                            raid_gold_income[i-1] = string_to_float(current_entry[i]);
-                        }
                     }
                 }
             }
