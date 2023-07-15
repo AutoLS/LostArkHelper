@@ -43,14 +43,6 @@ init_income_menu_settings :: ()
 
     //TODO Use enums?
 
-    materials_prices[0] = 0.2;
-    materials_prices[1] = 0.8;
-    materials_prices[2] = 20;
-    materials_prices[3] = 30;
-    materials_prices[Material.protection_stone] = 0.3;
-    materials_prices[Material.obliteration_stone] = 0.8;
-    materials_prices[Material.marvelous_leapstone] = 135;
-
     table_add(*materials_storage, "Crystallized Guardian Stone", int.[400, 500, 550, 600, 650, 700, 750, 800, 850, 0, 0, 0, 0, 0]);
     table_add(*materials_storage, "Protection Stone", int.[0, 0, 0, 0, 0, 0, 0, 0, 0, 500, 700, 750, 750, 800]);
     table_add(*materials_storage, "Crystallized Destruction Stone", int.[133, 167, 183, 200, 217, 233, 250, 267, 300, 0, 0, 0, 0, 0]);
@@ -111,17 +103,56 @@ parse_items_live_data :: (json_str: string, table: *Table(string, float), catego
 update_total_income :: ()
 {
     using lost_ark_helper.income_menu;
+    using lost_ark_helper.raids_settings;
 
     total_material_daily_gold = 0;
+    total_raid_gold = 0;
     for c, c_index : lost_ark_helper.character_page.characters
     {
         ilv_index := get_ilv_breakpoint_index(c.item_level);
         if ilv_index >= 0
         {
-            for materials_prices
+            for MATERIAL_LIST_STRINGS
             {
-                material, found := table_find(*materials_storage, MATERIAL_LIST_STRINGS[it_index]);
-                if found then total_material_daily_gold += material[ilv_index] * it;
+                mat_price: float;
+                found: bool;
+                mat_price, found = table_find(*items_prices[Item_Category.honing_materials], it);
+                if !found then mat_price, found = table_find(*items_prices[Item_Category.additional_honing_materials], it);
+
+                material, ok := table_find(*materials_storage, it);
+                if ok 
+                {
+                    if it == 
+                    {
+                        case "Crystallized Guardian Stone"; #through;
+                        case "Crystallized Destruction Stone"; #through;
+                        case "Protection Stone"; #through;
+                        case "Obliteration Stone";
+                        {
+                            mat_price /= 10;
+                        }
+                    }
+                    total_material_daily_gold += material[ilv_index] * mat_price;
+                }
+            }
+        }
+        if c.is_designated
+        {
+            index := 0;
+            for raid, raid_index : raids
+            {
+                for gate, gate_index : raid.gate_info
+                {
+                    if c.item_level >= xx gate.ilv_requirement && !c.is_skipping[index]
+                    {
+                        total_raid_gold += gate.gold_income;
+                        if c.is_purchasing_box[index] 
+                        {
+                            total_raid_gold -= gate.chest_cost;
+                        }
+                    }
+                    index += 1;
+                }
             }
         }
     }
@@ -584,7 +615,7 @@ update_income_menu :: ()
         update_settings_tab();
         update_materials_income_tab();
         update_raids_income_tab();
-        //update_total_income_tab();
+        update_total_income_tab();
         
         ImGui.EndTabBar();
     }
