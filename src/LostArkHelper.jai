@@ -29,6 +29,8 @@ JSON :: #import "JSON_Plus";
 
 */
 
+APP_VERSION :: "v1.4.2";
+
 Lost_Ark_Raids :: enum u32
 {
     Abyss_Dungeons;
