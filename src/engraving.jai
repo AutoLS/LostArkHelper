@@ -24,6 +24,7 @@ Engravings :: enum u32
     Desperate_Salvation;
     Disrespect;
     Divine_Protection;
+    Drizzle;
     Drops_of_Ether;
     Emergency_Rescue;
     Empress_Grace;
@@ -90,6 +91,7 @@ Engravings :: enum u32
     True_Courage;
     Ultimate_Skill_Taijutsu;
     Vital_Point_Hit;
+    Windfurry;
 }
 
 Reduction_Type :: enum u32
