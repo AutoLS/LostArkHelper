@@ -91,7 +91,7 @@ Engravings :: enum u32
     True_Courage;
     Ultimate_Skill_Taijutsu;
     Vital_Point_Hit;
-    Windfurry;
+    Wind_Fury;
 }
 
 Reduction_Type :: enum u32
