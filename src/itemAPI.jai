@@ -41,6 +41,6 @@ Market_Item :: struct
     rarity: int;
     category: string;
     subcategory: string;
-    //short_historic: Table(string, float); @rename("shortHistoric") TODO: Figure out how to convert this datatype
+    //short_historic: Table(string, float); @rename("shortHistoric")     
     updated_at: string; @rename("updatedAt")
 }

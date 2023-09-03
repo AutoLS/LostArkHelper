@@ -29,6 +29,7 @@ Income_Menu :: struct
     selected_category: s32;
     items_data: [#run enum_highest_value(Item_Category)+1][..] Market_Item;
     items_prices: [#run enum_highest_value(Item_Category)+1] Table(string, float);
+    items_texture: Table(string, u32);
     materials_prices: [MATERIAL_COUNT] float;
     materials_storage: Table(string, [ilv_breakpoints.count] int);
     raid_gold_income: [RAID_LIST_STRINGS.count] float;
@@ -52,6 +53,30 @@ init_income_menu_settings :: ()
     table_add(*materials_storage, "Marvelous Honor Leapstone", int.[0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 10, 14, 14, 14]);
 
     get_items_live_data();
+    download_and_load_necessary_images(*lost_ark_helper.income_menu, Item_Category.honing_materials);
+    download_and_load_necessary_images(*lost_ark_helper.income_menu, Item_Category.additional_honing_materials);
+}
+
+download_and_load_necessary_images :: (using income_menu: *Income_Menu, category: Item_Category)
+{
+    for items_data[category]
+    {
+        texture_path := tprint("ast/%.png", it.id);
+        if !file_exists(texture_path)
+        {
+            print("URL: %\n", it.image);
+            ok, res := curl_get(it.image);
+            if ok
+            {
+                write_entire_file(tprint("ast/%.webp", it.id), res);
+                print("Downloaded %.webp successfully\n", it.id);
+            }
+        }
+        else
+        {
+            table_add(*items_texture, it.name, gl_load_texture(temp_c_string(texture_path), true));
+        }
+    }
 }
 
 get_items_live_data :: ()
@@ -249,6 +274,12 @@ update_settings_tab :: ()
                     ImGui.TableNextRow(TABLE_ROW_FLAGS.None, 24);
 
                     ImGui.TableSetColumnIndex(0);
+                    texture, ok := table_find(*items_texture, name);
+                    if ok
+                    {
+                        ImGui.Image(cast(*void)texture, make_ImVec2(32, 32));
+                    }
+
                     ImGui.Text(name);
 
                     ImGui.TableSetColumnIndex(1);
