@@ -28,6 +28,22 @@ get_total_gates :: (raids: [..] Raid) -> s32
     return n;
 }
 
+add_new_gate :: (using raid: *Raid)
+{
+    new_gate: Gate_Info;
+    array_add(*gate_info, new_gate);
+    n_gates += 1;
+}
+
+remove_gate :: (using raid: *Raid, index: int)
+{
+    if gate_info.count > 0
+    {
+        array_ordered_remove_by_index(*gate_info, index);
+        n_gates -= 1;
+    }
+}
+
 update_raids_settings_menu :: ()
 {
     using lost_ark_helper.raids_settings;
@@ -110,6 +126,11 @@ update_raids_settings_menu :: ()
         ImGui.SetNextItemWidth(150);
         combo_box("Raids Select", raid_names, *selected_raid);
 
+        if ImGui.Button("Add gate")
+        {
+            add_new_gate(*raids[selected_raid]);
+        }
+
         for raids[selected_raid].gate_info
         {
             gold_label := temp_c_string(tprint("Gold##%", it_index));
@@ -121,6 +142,11 @@ update_raids_settings_menu :: ()
             ImGui.InputInt(chest_label, *it.chest_cost);
             ImGui.InputInt(ilv_label, *it.ilv_requirement);
             ImGui.PopItemWidth();
+            remove_label := temp_c_string(tprint("Remove##%_%", raid_names[selected_raid], it_index));
+            if ImGui.Button(remove_label)
+            {
+                remove_gate(*raids[selected_raid], it_index);
+            }
         }
     }
 }
