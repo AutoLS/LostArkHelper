@@ -42,5 +42,5 @@ Market_Item :: struct
     category: string;
     subcategory: string;
     //short_historic: Table(string, float); @rename("shortHistoric")     
-    updated_at: string; @rename("updatedAt")
+    //updated_at: string; @rename("updatedAt")
 }
