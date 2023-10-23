@@ -19,6 +19,14 @@ User_Data_File :: struct
     program_closed_time: Calendar_Time; 
 }
 
+LOA_Helper_Save_File :: struct
+{
+    characters_data: Character_Page;
+    engravings_data: [..] Engraving_Preset;
+    selected_engraving_preset: s32;
+    raids_data: [..] Raid;
+}
+
 set_unsaved :: ()
 {
     using lost_ark_helper;
@@ -250,6 +258,14 @@ save_file :: (path: string)
         free(recent_file);
     }
     recent_file = copy_string(path);
+
+    loa_helper_save_file: LOA_Helper_Save_File;
+    loa_helper_save_file.characters_data = lost_ark_helper.character_page;
+    loa_helper_save_file.engravings_data = lost_ark_helper.engraving_builder.presets;
+    loa_helper_save_file.selected_engraving_preset = lost_ark_helper.engraving_builder.selected_preset;
+    loa_helper_save_file.raids_data = lost_ark_helper.raids_settings.raids;
+
+    json_write_file("sav/default.json", loa_helper_save_file);
 
     file_builder: String_Builder;
     init_string_builder(*file_builder);
