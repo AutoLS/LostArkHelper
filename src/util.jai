@@ -1,3 +1,18 @@
+strlen :: (s: *u8) -> s64
+{
+    // Return the length of s, a C-style zero-terminated string.
+    // If you pass in a pointer that is not zero-terminated,
+    // BAD things will happen!
+     count: s64 = 0;
+
+     while <<s {
+         count += 1;
+         s += 1;
+     }
+
+     return count;
+}
+
 SOA :: struct(T: Type, count: int) 
 {
     #insert -> string 

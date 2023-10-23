@@ -13,6 +13,7 @@ JSON :: #import "JSON_Plus";
 #load "math.jai";
 #load "input.jai";
 #load "opengl.jai";
+#load "render.jai";
 #load "ui.jai";
 #load "character.jai";
 #load "raids.jai";
@@ -24,6 +25,7 @@ JSON :: #import "JSON_Plus";
 #load "customization.jai";
 #load "network.jai";
 #load "itemAPI.jai";
+#load "bingo.jai";
 
 /* TODO: Maybe convert save files to json? 
 
@@ -46,6 +48,7 @@ Lost_Ark_Tools :: enum u32
     RAIDS_SETTINGS_MENU;
     ENGRAVING_BUILDER;
     CUSTOMIZATION_CONVERTER;
+    BINGO_CALCULATOR;
 }
 
 Lost_Ark_Helper :: struct
@@ -56,12 +59,16 @@ Lost_Ark_Helper :: struct
     engraving_builder: Engraving_Builder;
     current_tool: Lost_Ark_Tools;
     cus_converter_data: Customization_Converter_Data;
+    bingo_board: Bingo_Board;
 
     file_handler: File_Handler;
 
     input: Input;
     clock: Clock;
     curl_handle: *CURL;
+
+    window_dimension: Vector2;
+    simple_renderer: Simple_Renderer;
 }
 
 lost_ark_helper: Lost_Ark_Helper;
@@ -69,6 +76,9 @@ lost_ark_helper: Lost_Ark_Helper;
 init_lost_ark_helper :: ()
 {
     using lost_ark_helper;
+    current_tool = .BINGO_CALCULATOR;
+    window_dimension = .{1280, 720};
+    simple_renderer = create_simple_renderer();
     curl_handle = curl_easy_init();
     assert(curl_handle != null);
     file_handler.current_opened_save = alloc(DEFAULT_PATH_SIZE);
@@ -79,6 +89,7 @@ init_lost_ark_helper :: ()
 	add_character(*character_page, "Character1", 0);
 	init_engraving_builder(*engraving_builder);
 	init_income_menu_settings();
+    init_bingo_board(*bingo_board);
 	load_user_data_file();
 }
 

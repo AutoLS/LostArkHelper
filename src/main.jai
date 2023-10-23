@@ -53,7 +53,7 @@ main :: ()
 	while running
 	{
 		reset_temporary_storage();
-		reset_controller_input(*input.keyboard);
+		reset_controller_input();
 
 		event: SDL_Event;
         while SDL_PollEvent(*event) 
@@ -101,11 +101,37 @@ main :: ()
 						}
 					}
 				}
+				case SDL_MOUSEMOTION;
+				{
+					SDL_GetMouseState(*input.mouse_state.x, *input.mouse_state.y);
+				}
+				case SDL_MOUSEBUTTONDOWN; #through;
+				case SDL_MOUSEBUTTONUP;
+				{
+					is_down: bool = event.button.state == SDL_PRESSED;
+					was_down: bool;
+					
+					if event.button.state == SDL_RELEASED
+					{
+						was_down = true;
+					}
+					
+					if event.button.button == SDL_BUTTON_LEFT
+					{
+						process_keypress(*input.left_button, is_down, was_down);
+					}
+				}
 			}
         }
 
 		ImGui_ImplSdl_NewFrame(window);
 		ImGui.NewFrame();
+
+		window_dimension.x = xx io.DisplaySize.x; 
+		window_dimension.y = xx io.DisplaySize.y; 
+		glViewport(0, 0, xx io.DisplaySize.x, xx io.DisplaySize.y);
+        glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+        glClear(GL_COLOR_BUFFER_BIT);
 
 		is_new_file := false;
 		is_open_file := false;
@@ -143,6 +169,7 @@ main :: ()
 				if ImGui.MenuItem("Raids", null) current_tool = .RAIDS_SETTINGS_MENU;
 				if ImGui.MenuItem("Engraving Builder", null) current_tool = .ENGRAVING_BUILDER;
 				if ImGui.MenuItem("Preset Converter", null) current_tool = .CUSTOMIZATION_CONVERTER;
+				if ImGui.MenuItem("Bingo Simulator", null) current_tool = .BINGO_CALCULATOR;
 				ImGui.MenuItem("Debug Metrics", null, *show_app_metric);
 			}
 		}
@@ -216,15 +243,19 @@ main :: ()
 			{
 				update_customization_converter_menu(*cus_converter_data);
 			}
+
+			case .BINGO_CALCULATOR;
+			{
+				update_board(*bingo_board);
+				draw_board(*bingo_board);
+			}
 		}
 		ImGui.End();
 
 		lock_fps(*lost_ark_helper.clock, 60);
 
 		ImGui.Render();
-        glViewport(0, 0, xx io.DisplaySize.x, xx io.DisplaySize.y);
-        glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-        glClear(GL_COLOR_BUFFER_BIT);
+        
         ImGui_ImplSdl_RenderDrawLists(ImGui.GetDrawData());
         SDL_GL_SwapWindow(window);
 
