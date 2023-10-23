@@ -62,8 +62,13 @@ download_and_load_necessary_images :: (using income_menu: *Income_Menu, category
     for items_data[category]
     {
         texture_path := tprint("ast/%.png", it.id);
-        if !file_exists(texture_path)
+        if file_exists(texture_path)
         {
+            table_add(*items_texture, it.name, gl_load_texture(temp_c_string(texture_path), true));
+        }
+        else
+        {   
+/*
             print("URL: %\n", it.image);
             ok, res := curl_get(it.image);
             if ok
@@ -71,10 +76,7 @@ download_and_load_necessary_images :: (using income_menu: *Income_Menu, category
                 write_entire_file(tprint("ast/%.webp", it.id), res);
                 print("Downloaded %.webp successfully\n", it.id);
             }
-        }
-        else
-        {
-            table_add(*items_texture, it.name, gl_load_texture(temp_c_string(texture_path), true));
+*/
         }
     }
 }
