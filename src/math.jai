@@ -22,6 +22,32 @@ rectf :: (x: float, y: float, w: float, h: float) -> Rectf
     return rect;
 }
 
+Grid :: struct (count_x: s64, count_y: s64, T: Type) 
+{
+    NUM_SQUARES :: count_x*count_y;
+    
+    values:   [NUM_SQUARES] T;
+}
+
+for_expansion :: (grid: *Grid, body: Code, flags: For_Flags) #expand 
+{
+    for y: 0..grid.count_y-1 
+    {
+        for x: 0..grid.count_x-1 
+        {
+            index := y*grid.count_x + x;
+
+            `it := *grid.values[index];
+            
+            `it_index: Vec2(int); 
+            it_index.x = x;
+            it_index.y = y;
+
+            #insert body;
+        }
+    }
+}
+
 point_in_rect :: (p: Vector2, rect: Rectf) -> bool
 {
 	if(p.x < rect.x)
