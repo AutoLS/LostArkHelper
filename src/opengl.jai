@@ -187,9 +187,7 @@ GL_Shape_Data :: struct
 	usage: GLenum;
 }
 
-gl_gen_shape :: (vertices: *Vector3, count: u32, total_count: u32, 
-				  indices: *u32 = null, indices_count: u32 = 0, usage: GLenum = GL_STATIC_DRAW) 
-				  -> GL_Shape_Data
+gl_gen_shape :: (vertices: *Vector3, count: u32, total_count: u32, indices: *u32 = null, indices_count: u32 = 0, usage: GLenum = GL_STATIC_DRAW) -> GL_Shape_Data
 {
 	shape: GL_Shape_Data;
 	glGenVertexArrays(1, *shape.vao);
@@ -215,14 +213,12 @@ gl_upload_shape_data :: (shape: *GL_Shape_Data)
 	glBindVertexArray(shape.vao);
 
 	glBindBuffer(GL_ARRAY_BUFFER, shape.vbo);
-	glBufferData(GL_ARRAY_BUFFER, size_of(Vector3) * shape.n_vertices_total, 
-				 shape.vertices, shape.usage);
+	glBufferData(GL_ARRAY_BUFFER, size_of(Vector3) * shape.n_vertices_total, shape.vertices, shape.usage);
 	
 	if(shape.indices)
 	{
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, shape.ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_of(u32) * shape.n_indices, 
-					 shape.indices, shape.usage);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_of(u32) * shape.n_indices, shape.indices, shape.usage);
 	}
 
 	glBindVertexArray(0);
@@ -231,8 +227,7 @@ gl_upload_shape_data :: (shape: *GL_Shape_Data)
 gl_set_attrib_pointer :: (shape: *GL_Shape_Data, loc: u32, size: s32, stride: GLsizei, offset: s32)
 {
 	glBindVertexArray(shape.vao);
-	glVertexAttribPointer(loc, size, GL_FLOAT, GL_FALSE, 
-						  stride * size_of(float), xx (size_of(float)*offset));
+	glVertexAttribPointer(loc, size, GL_FLOAT, GL_FALSE, stride * size_of(float), xx (size_of(float)*offset));
 	glEnableVertexAttribArray(loc);
 	glBindVertexArray(0);
 }
