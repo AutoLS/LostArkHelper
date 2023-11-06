@@ -242,13 +242,13 @@ calculate_placement_score :: (x: int, y: int, turn: int, tiles: *Grid(N_TILE, N_
     if turn % 3 == 0 && !bingo then return -1;
     if turn % 3 != 0 && bingo
     {
-        score += tile_value * 100;
+        score += tile_value * 1000;
     }
 
     return score;
 }
 
-// TODO: This is currently not an ideal solution, but it's the best one that I came up with atm.. 
+// TODO: This is currently not an ideal solution, but it's the best one that I came up with my smol brain atm.. 
 calculate_best_placements :: (using board: *Bingo_Board)
 {
     /*  Rules:
