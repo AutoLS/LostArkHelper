@@ -362,7 +362,7 @@ update_board :: (using board: *Bingo_Board)
             tiles = peek(board_state);
             turn -= 1;
         }
-        calculate_best_placements(board);
+        if turn > 0 calculate_best_placements(board);
     }
 
     mouse_pos := make_vector2(xx input.mouse_state.x, xx input.mouse_state.y);
