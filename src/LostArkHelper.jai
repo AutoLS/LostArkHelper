@@ -76,7 +76,7 @@ lost_ark_helper: Lost_Ark_Helper;
 init_lost_ark_helper :: ()
 {
     using lost_ark_helper;
-    current_tool = .BINGO_CALCULATOR;
+    current_tool = .CHARACTER_CHECKLIST;
     window_dimension = .{1280, 720};
     simple_renderer = create_simple_renderer();
     curl_handle = curl_easy_init();
