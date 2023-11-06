@@ -316,6 +316,7 @@ reset_board :: (using board: *Bingo_Board)
     total_score = 0;
     score_board = SCORE_MULTIPLIER_BOARD;
     array_reset(*board_state);
+    array_reset(*placement_indices);
     array_add(*board_state, tiles);
     turn = -1;
 }
@@ -361,6 +362,7 @@ update_board :: (using board: *Bingo_Board)
             tiles = peek(board_state);
             turn -= 1;
         }
+        calculate_best_placements(board);
     }
 
     mouse_pos := make_vector2(xx input.mouse_state.x, xx input.mouse_state.y);
