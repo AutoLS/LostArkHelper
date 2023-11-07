@@ -298,12 +298,12 @@ calculate_best_placements :: (using board: *Bingo_Board)
         }
     }
 
-    print("Round: %\n", turn);
-    for placement_indices
-    {
-        print("Index: (%, %)\n", it.x, it.y);
-    }
-    print("\n");
+    // print("Round: %\n", turn);
+    // for placement_indices
+    // {
+    //     print("Index: (%, %)\n", it.x, it.y);
+    // }
+    // print("\n");
 }
 
 reset_board :: (using board: *Bingo_Board)
