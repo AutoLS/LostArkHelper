@@ -1,17 +1,18 @@
 # LostArkHelper
 
 Simple helper tool for lost ark<br />
+This is a personal tool that I made for fun on my spare time
 
 **Current features:** <br />
 - Checklist & Notes
 - Income calculator
 - Engraving builder
 - Customization preset converter
+- A very scuffed bingo calculator
 
 **Planned features:** <br />
 - Ability stone calculator
 - Improving engraving builder (Adding reduced abilities and stats)
-- Bingo calculator
 
 Here are some screenshots:<br />
 
