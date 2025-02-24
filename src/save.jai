@@ -21,7 +21,8 @@ User_Data_File :: struct
 
 LOA_Helper_Save_File :: struct
 {
-    characters_data: Character_Page;
+    recent_path: string;
+    characters_data: [..] Character;
     engravings_data: [..] Engraving_Preset;
     selected_engraving_preset: s32;
     raids_data: [..] Raid;
@@ -96,7 +97,25 @@ save_file_dialogue :: ()
     file_dialogue.lpstrInitialDir = temp_c_string(initial_dir);
     if GetSaveFileNameA(*file_dialogue)
     {
-        save_file(to_string(file_dialogue.lpstrFile));
+        save_file_json(to_string(file_dialogue.lpstrFile));
+    }
+}
+
+save_file_dialogue_json :: ()
+{
+    file_name: [128] u8;
+    initial_dir := path_strip_filename(get_path_of_running_executable());
+    replace_chars(initial_dir, "/", #char "\\");
+    file_dialogue: OPENFILENAME(u8);
+    file_dialogue.lStructSize = size_of(OPENFILENAME(u8));
+    file_dialogue.lpstrFilter = "JSON files (*.json)\0*.json\0\0";
+    file_dialogue.lpstrDefExt = "json";
+    file_dialogue.nMaxFile = 128;
+    file_dialogue.lpstrFile = file_name.data;
+    file_dialogue.lpstrInitialDir = temp_c_string(initial_dir);
+    if GetSaveFileNameA(*file_dialogue)
+    {
+        save_file_json(to_string(file_dialogue.lpstrFile));
     }
 }
 
@@ -118,6 +137,16 @@ get_open_file_name :: (filter: *u8, ext: *u8, file_name: *u8, size: s32 = DEFAUL
 open_file_dialogue :: ()
 {
     file_dialogue := get_open_file_name("Save files (*.sav)\0*.sav\0\0", "sav", lost_ark_helper.file_handler.current_opened_save);
+
+    if GetOpenFileNameA(*file_dialogue)
+    {
+        open_file(to_string(file_dialogue.lpstrFile));
+    }
+}
+
+open_file_dialogue_json :: ()
+{
+    file_dialogue := get_open_file_name("JSON files (*.json)\0*.json\0\0", "json", lost_ark_helper.file_handler.current_opened_save);
 
     if GetOpenFileNameA(*file_dialogue)
     {
@@ -164,19 +193,20 @@ save_user_data :: (path: string)
     }
     write_entire_file("data/user.dat", *user_data_builder);
 
-    using lost_ark_helper.raids_settings;
-    json_write_file("data/raids_data.json", raids);
+    set_saved();
 }
 
 load_user_data_file :: ()
 {
     using lost_ark_helper.character_page;
+
     if file_exists("data/raids_data.json")
     {
         using lost_ark_helper.raids_settings;
         raids=, ok:, err := JSON.from_json_file([..] Raid, "data/raids_data.json");
         if ok then total_gates = get_total_gates(raids);
     }
+
     if file_exists("data/user.dat")
 	{
 		file_data, ok := read_entire_file("data/user.dat");
@@ -218,6 +248,7 @@ load_user_data_file :: ()
             }
 
             open_file(recent_path);
+            //open_file_json(recent_path);
 		}
 	}
 }
@@ -229,6 +260,27 @@ save_user_data_if_recent_file_is_valid :: ()
     {
         save_user_data(recent_file);
     }
+}
+
+save_file_json :: (path: string)
+{
+    using lost_ark_helper.file_handler;
+
+    if recent_file.data
+    {
+        free(recent_file);
+    }
+    recent_file = copy_string(path);
+
+    loa_helper_save_file: LOA_Helper_Save_File;
+    loa_helper_save_file.recent_path = recent_file;
+    loa_helper_save_file.characters_data = lost_ark_helper.character_page.characters;
+    loa_helper_save_file.engravings_data = lost_ark_helper.engraving_builder.presets;
+    loa_helper_save_file.selected_engraving_preset = lost_ark_helper.engraving_builder.selected_preset;
+    loa_helper_save_file.raids_data = lost_ark_helper.raids_settings.raids;
+
+    json_write_file(path, loa_helper_save_file);
+    set_saved();
 }
 
 save_file :: (path: string)
@@ -260,7 +312,8 @@ save_file :: (path: string)
     recent_file = copy_string(path);
 
     loa_helper_save_file: LOA_Helper_Save_File;
-    loa_helper_save_file.characters_data = lost_ark_helper.character_page;
+    loa_helper_save_file.recent_path = recent_file;
+    loa_helper_save_file.characters_data = lost_ark_helper.character_page.characters;
     loa_helper_save_file.engravings_data = lost_ark_helper.engraving_builder.presets;
     loa_helper_save_file.selected_engraving_preset = lost_ark_helper.engraving_builder.selected_preset;
     loa_helper_save_file.raids_data = lost_ark_helper.raids_settings.raids;
@@ -276,7 +329,7 @@ save_file :: (path: string)
 
     for characters
     {
-        name := to_string(it.name);
+        name := it.name;
         checks := get_checked_indices(it.checklist);
         purchasing_box := get_checked_indices(it.is_purchasing_box);
         skipping := get_checked_indices(it.is_skipping);
@@ -319,13 +372,30 @@ initiate_save_file :: ()
     if recent_file == ""
     {
         save_file_dialogue();
+        //save_file_dialogue_json();
     }
     else
     {
         path := copy_temporary_string(recent_file);
         save_user_data(path);
         save_file(path);
+        //save_file_json(path);
     }
+}
+
+open_file_json :: (path: string) -> bool
+{
+    data, ok, err := JSON.from_json_file(LOA_Helper_Save_File, path);
+    if ok
+    {
+        lost_ark_helper.file_handler.recent_file = data.recent_path;
+        lost_ark_helper.character_page.characters = data.characters_data;
+        lost_ark_helper.engraving_builder.presets = data.engravings_data;
+        lost_ark_helper.engraving_builder.selected_preset = data.selected_engraving_preset;
+        lost_ark_helper.raids_settings.raids = data.raids_data;
+    }
+
+    return ok;
 }
 
 open_file :: (path: string) -> bool
@@ -398,9 +468,7 @@ open_file :: (path: string) -> bool
                     {
                         case "character_name";
                         {
-                            character.name = alloc(17);
-                            memset(character.name, 0, 17);
-                            memcpy(character.name, character_data_entry[1].data, character_data_entry[1].count);
+                            character.name = character_data_entry[1];
                         }
                         
                         case "item_level";
