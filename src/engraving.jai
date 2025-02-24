@@ -5,11 +5,13 @@ Engravings :: enum u32
     All_Out_Attack;
     Ambush_Master;
     Arthetinean_Skill;
+    Asura;
     Awakening;
     Barrage_Enhancement;
     Barricade;
     Berserkers_Technique;
     Blessed_Aura;
+    Brawl_King_Storm;
     Broken_Bone;
     Combat_Readiness;
     Communication_Overflow;
@@ -41,6 +43,7 @@ Engravings :: enum u32
     First_Intention;
     Fortitude;
     Full_Bloom;
+    Full_Moon;
     Gravity_Training;
     Grudge;
     Heavy_Armor;
@@ -63,6 +66,7 @@ Engravings :: enum u32
     Mayhem;
     MP_Efficiency_Increase;
     Necromancy;
+    Nights_Edge;
     Order_of_the_Emperor;
     Peacemaker;
     Perfect_Suppression;
