@@ -21,7 +21,7 @@ main :: ()
 		return;
 	}
 
-	print("% by AutoLs\n", APP_VERSION);
+	print("by AutoLs\n");
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, xx SDL_GL_CONTEXT_PROFILE_CORE);
 	gl_context := SDL_GL_CreateContext(window);
     if !gl_context 
