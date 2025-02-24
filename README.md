@@ -5,10 +5,10 @@ This is a personal tool that I made for fun on my spare time
 
 **Current features:** <br />
 - Checklist & Notes
-- Income calculator
+- Income calculator (Materials income is currently not supported because community market api is taken down)  
 - Engraving builder
 - Customization preset converter
-- A very scuffed bingo calculator
+- Logging convert calculator
 
 **Planned features:** <br />
 - Ability stone calculator
