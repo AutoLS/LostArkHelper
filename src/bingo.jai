@@ -365,7 +365,7 @@ update_board :: (using board: *Bingo_Board)
         if turn > 0 calculate_best_placements(board);
     }
 
-    mouse_pos := make_vector2(xx input.mouse_state.x, xx input.mouse_state.y);
+    mouse_pos := Vector2.{xx input.mouse_state.x, xx input.mouse_state.y};
     rotation_angle := 45.0;
     rotate_point_around_center(*mouse_pos, window_dimension*0.5, rotation_angle);
 

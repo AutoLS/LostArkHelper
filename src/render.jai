@@ -13,8 +13,7 @@ create_simple_renderer :: () -> Simple_Renderer
 
     shader = create_shader(VERTEX_SOURCE, FRAGMENT_SOURCE);
 	
-	rect_vertices :: Vector3.
-	[
+	rect_vertices :: Vector3.[
 		Vector3.{0.5, 0.5, 0},   //Top Right		
 		Vector3.{0.5, -0.5, 0},  //Bottom Right
 		Vector3.{-0.5, -0.5, 0}, //Bottom Let
@@ -45,8 +44,8 @@ default_projection_view :: (using renderer: *Simple_Renderer)
 rotate_projection :: (using renderer: *Simple_Renderer)
 {
     using lost_ark_helper;
-    view = translate(identity_of(Matrix4), make_vector3(window_dimension.x * 0.5, window_dimension.y*0.5, 0)) * make_rotation_matrix(.{0, 0, 1}, radians(-45.0));
-    view = translate(view, make_vector3(-window_dimension.x * 0.5, -window_dimension.y*0.5, 0));
+    view = translate(identity_of(Matrix4), Vector3.{window_dimension.x * 0.5, window_dimension.y*0.5, 0}) * make_rotation_matrix(.{0, 0, 1}, radians(-45.0));
+    view = translate(view, Vector3.{-window_dimension.x * 0.5, -window_dimension.y*0.5, 0});
     gl_set_projection_view_matrix(shader, *projection, *view);
 }
 
@@ -58,7 +57,7 @@ draw_rect :: (using renderer: *Simple_Renderer, pos: Vector2, dim: Vector2, colo
 	rotation := identity_of(Matrix4);
 	if angle then rotation = make_rotation_matrix(axis, angle);
 	
-	model := scale(translate(identity_of(Matrix4), make_vector3(pos.x, pos.y, 0)) * rotation, make_vector3(dim.x, dim.y, 0));
+	model := scale(translate(identity_of(Matrix4), Vector3.{pos.x, pos.y, 0}) * rotation, Vector3.{dim.x, dim.y, 0});
 	model_loc := glGetUniformLocation(shader, "model");
 	glUniformMatrix4fv(model_loc, 1, true, xx *model);
 	

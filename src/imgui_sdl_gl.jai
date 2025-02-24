@@ -355,8 +355,8 @@ ImGui_ImplSdl_NewFrame :: (window: *SDL_Window) {
     display_w, display_h: s32;
     SDL_GetWindowSize(window, *w, *h);
     SDL_GL_GetDrawableSize(window, *display_w, *display_h);
-    io.DisplaySize = make_vector2(xx w, xx h);
-    io.DisplayFramebufferScale = make_vector2(cast(float) display_w / w, cast(float) display_h / h);
+    io.DisplaySize = Vector2.{xx w, xx h};
+    io.DisplayFramebufferScale = Vector2.{cast(float) display_w / w, cast(float) display_h / h};
 
     // Setup time step
     frequency := SDL_GetPerformanceFrequency();
@@ -375,9 +375,9 @@ ImGui_ImplSdl_NewFrame :: (window: *SDL_Window) {
     // (we already got mouse wheel, keyboard keys & characters from SDL_PollEvent())
     mx, my: s32;
     mouseMask := SDL_GetMouseState(*mx, *my);
-    if (SDL_GetWindowFlags(window) & SDL_WINDOW_MOUSE_FOCUS) io.MousePos = make_vector2(xx mx, xx my);   // Mouse position, in pixels (set to -1,-1 if no mouse / on another screen, etc.)
+    if (SDL_GetWindowFlags(window) & SDL_WINDOW_MOUSE_FOCUS) io.MousePos = Vector2.{xx mx, xx my};   // Mouse position, in pixels (set to -1,-1 if no mouse / on another screen, etc.)
     else 
-        io.MousePos = make_vector2(-FLOAT32_MAX,-FLOAT32_MAX);
+        io.MousePos = Vector2.{-FLOAT32_MAX,-FLOAT32_MAX};
 
     io.MouseDown[0] = (g_MousePressed[0] || (mouseMask & SDL_BUTTON(SDL_BUTTON_LEFT)) != 0);      // If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
     io.MouseDown[1] = (g_MousePressed[1] || (mouseMask & SDL_BUTTON(SDL_BUTTON_RIGHT)) != 0);

@@ -43,7 +43,7 @@ main :: ()
 
 	running := true;
 	is_quit: bool;
-	clear_color := make_vector4(0, 0, 0, 1.00);
+	clear_color := Vector4.{0, 0, 0, 1.00};
 	main_tool_active: bool;
 	show_app_metric: bool;
 
