@@ -26,6 +26,7 @@ JSON :: #import "JSON_Plus";
 #load "network.jai";
 #load "itemAPI.jai";
 #load "bingo.jai";
+#load "log_calculator.jai";
 
 /* TODO: Maybe convert save files to json? 
 
@@ -49,6 +50,7 @@ Lost_Ark_Tools :: enum u32
     ENGRAVING_BUILDER;
     CUSTOMIZATION_CONVERTER;
     BINGO_CALCULATOR;
+    LOG_CALCULATOR;
 }
 
 Lost_Ark_Helper :: struct
@@ -59,6 +61,7 @@ Lost_Ark_Helper :: struct
     engraving_builder: Engraving_Builder;
     current_tool: Lost_Ark_Tools;
     cus_converter_data: Customization_Converter_Data;
+    log_calculator_data: Log_Calculator_Data;
     bingo_board: Bingo_Board;
 
     file_handler: File_Handler;
@@ -80,13 +83,13 @@ init_lost_ark_helper :: ()
     window_dimension = .{1280, 720};
     simple_renderer = create_simple_renderer();
     curl_handle = curl_easy_init();
-    assert(curl_handle != null);
+    //assert(curl_handle != null);
     file_handler.current_opened_save = alloc(DEFAULT_PATH_SIZE);
     cus_converter_data.file_name_ptr = alloc(DEFAULT_PATH_SIZE);
     memset(cus_converter_data.file_name_ptr, 0, DEFAULT_PATH_SIZE);
     memset(file_handler.current_opened_save, 0, DEFAULT_PATH_SIZE);
     lost_ark_helper.clock = init_clock();
-	add_character(*character_page, "Character1", 0);
+	init_character_page(*character_page);
 	init_engraving_builder(*engraving_builder);
 	init_income_menu_settings();
     init_bingo_board(*bingo_board);
@@ -138,6 +141,7 @@ handle_file_action :: (is_new_file: bool, is_open_file: bool, is_save_file: bool
         else
         {
             open_file_dialogue();
+            //open_file_dialogue_json();
             begin_open_file = false;
         }
     }

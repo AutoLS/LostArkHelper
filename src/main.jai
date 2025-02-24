@@ -164,12 +164,13 @@ main :: ()
 			if ImGui.BeginMenu("Menu")
 			{
 				defer ImGui.EndMenu();
-				if ImGui.MenuItem("Checklist", null) current_tool = .CHARACTER_CHECKLIST;
+				if ImGui.MenuItem("Characters", null) current_tool = .CHARACTER_CHECKLIST;
 				if ImGui.MenuItem("Income", null) current_tool = .INCOME_MENU;
 				if ImGui.MenuItem("Raids", null) current_tool = .RAIDS_SETTINGS_MENU;
 				if ImGui.MenuItem("Engraving Builder", null) current_tool = .ENGRAVING_BUILDER;
 				if ImGui.MenuItem("Preset Converter", null) current_tool = .CUSTOMIZATION_CONVERTER;
-				if ImGui.MenuItem("Bingo Simulator", null) current_tool = .BINGO_CALCULATOR;
+				//if ImGui.MenuItem("Bingo Simulator", null) current_tool = .BINGO_CALCULATOR;
+				if ImGui.MenuItem("Log Convert Calculator", null) current_tool = .LOG_CALCULATOR;
 				ImGui.MenuItem("Debug Metrics", null, *show_app_metric);
 			}
 		}
@@ -248,6 +249,11 @@ main :: ()
 			{
 				update_board(*bingo_board);
 				draw_board(*bingo_board);
+			}
+
+			case .LOG_CALCULATOR;
+			{
+				update_log_calculator();
 			}
 		}
 		ImGui.End();
