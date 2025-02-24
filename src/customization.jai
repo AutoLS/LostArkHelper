@@ -1,10 +1,3 @@
-Customization_Converter_Status :: enum u32
-{
-    NONE;
-    OK;
-    ERR;
-}
-
 Customization_Converter_Data :: struct 
 {
     file_name_ptr: *u8;
@@ -12,7 +5,7 @@ Customization_Converter_Data :: struct
     file_data: string;
     opened: bool;
     loaded: bool;
-    status: Customization_Converter_Status = .NONE;
+    status: Status_Code = .NONE;
 }
 
 update_customization_converter_menu :: (using cus_converter_data: *Customization_Converter_Data)

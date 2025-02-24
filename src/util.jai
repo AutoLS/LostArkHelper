@@ -1,3 +1,10 @@
+Status_Code :: enum u32
+{
+    NONE;
+    OK;
+    ERR;
+}
+
 strlen :: (s: *u8) -> s64
 {
     // Return the length of s, a C-style zero-terminated string.
