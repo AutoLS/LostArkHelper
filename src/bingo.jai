@@ -248,7 +248,7 @@ calculate_placement_score :: (x: int, y: int, turn: int, tiles: *Grid(N_TILE, N_
     return score;
 }
 
-// TODO: This is currently not an ideal solution, but it's the best one that I came up with my smol brain atm.. 
+// TODO: This is currently not an ideal solution, but it's the best one that I came up with my smol brain 
 calculate_best_placements :: (using board: *Bingo_Board)
 {
     /*  Rules:
