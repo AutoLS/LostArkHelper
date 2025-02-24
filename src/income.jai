@@ -52,7 +52,7 @@ init_income_menu_settings :: ()
     table_add(*materials_storage, "Great Honor Leapstone", int.[0, 6, 6, 6, 10, 10, 10, 14, 14, 0, 0, 0, 0, 0]);
     table_add(*materials_storage, "Marvelous Honor Leapstone", int.[0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 10, 14, 14, 14]);
 
-    get_items_live_data();
+    //get_items_live_data();
     download_and_load_necessary_images(*lost_ark_helper.income_menu, Item_Category.honing_materials);
     download_and_load_necessary_images(*lost_ark_helper.income_menu, Item_Category.additional_honing_materials);
 }
@@ -81,6 +81,7 @@ download_and_load_necessary_images :: (using income_menu: *Income_Menu, category
     }
 }
 
+//!! IMPORTANT: data no longer supported, need to rewrite the code
 get_items_live_data :: ()
 {
     using lost_ark_helper.income_menu;
@@ -250,12 +251,15 @@ update_settings_tab :: ()
     {
         flags := TABLE_FLAGS.Borders | TABLE_FLAGS.RowBg;
         text_height := ImGui.GetTextLineHeightWithSpacing();
+        /*
         if ImGui.BeginChild("Item Prices", make_ImVec2(400, 300))
         {
+            /*
             if ImGui.Button("Refresh")
             {
                 get_items_live_data();
             }
+            */
             ImGui.SameLine();
             category_str := *u8.["Honing Materials", "Additional Honing Materials"];
             combo_box("Category", category_str, *selected_category);
@@ -354,6 +358,7 @@ update_settings_tab :: ()
             }
         }
         ImGui.NewLine();
+        */
         /* if ImGui.BeginTable("Raid_Gold_Settings_Table", 2, flags, make_ImVec2(400, 224))
         {
             defer ImGui.EndTable();
@@ -385,14 +390,14 @@ update_settings_tab :: ()
                 }
             }
         }
-        */
         ImGui.SameLine();
+        */
         if ImGui.BeginChild("Designated Characters Checklist", make_ImVec2(300, 200))
         {
             ImGui.Text("Designated characters (up to 6)");
             for *lost_ark_helper.character_page.characters
             {
-                if ImGui.Checkbox(it.name, *it.is_designated)
+                if ImGui.Checkbox(to_c_string(it.name), *it.is_designated)
                 {
                     set_unsaved();
                     designated_count := get_designated_count(*lost_ark_helper.character_page);
@@ -438,7 +443,7 @@ update_materials_income_tab :: ()
                 ilv_index := get_ilv_breakpoint_index(c.item_level);
 
                 ImGui.TableSetColumnIndex(0);
-                ImGui.Text(to_string(c.name));
+                ImGui.Text(c.name);
                 
                 ImGui.TableSetColumnIndex(1);
                 ImGui.Text(tprint("%", c.item_level));
@@ -553,7 +558,7 @@ update_raids_income_tab :: ()
             array_add(*column_headers, "Source");
             for characters
             {
-                if it.is_designated then array_add(*column_headers, tprint("% [%]", to_string(it.name), it.item_level));
+                if it.is_designated then array_add(*column_headers, tprint("% [%]", it.name, it.item_level));
             }
 
             ImGui.TableSetupScrollFreeze(1, 1);
@@ -619,6 +624,9 @@ update_raids_income_tab :: ()
                 ImGui.Text(tprint("%g", total_raid_income[it-1]));
                 total_raid_gold += total_raid_income[it-1];
             }
+            ImGui.TableNextRow(TABLE_ROW_FLAGS.None, 24);
+            ImGui.TableSetColumnIndex(0);
+            ImGui.Text(tprint("%g", total_raid_gold));
         }
         ImGui.EndTabItem();
     }
@@ -631,10 +639,10 @@ update_total_income_tab :: ()
     {
         update_total_income();
         rounded_mat_daily_gold := round_real_to_int(total_material_daily_gold);
-        ImGui.Text("Total daily gold from mats      ~= %g", rounded_mat_daily_gold);
-        ImGui.Text("Total weekly gold from mats     ~= %g", rounded_mat_daily_gold * 7);
-        ImGui.Text("Total weekly gold from raids    ~= %g", cast(int)total_raid_gold);
-        ImGui.Text("Total gold per week             ~= %g", cast(int)total_raid_gold + (rounded_mat_daily_gold * 7));
+        // ImGui.Text("Total daily gold from mats      ~= %g", rounded_mat_daily_gold);
+        // ImGui.Text("Total weekly gold from mats     ~= %g", rounded_mat_daily_gold * 7);
+        //ImGui.Text("Total weekly gold from raids    ~= %g", cast(int)total_raid_gold);
+        ImGui.Text("Total gold per week             ~= %g", cast(int)total_raid_gold);
 
         ImGui.EndTabItem();
     }
@@ -646,9 +654,9 @@ update_income_menu :: ()
     if (ImGui.BeginTabBar("Income_Tables", TAB_BAR_FLAGS.Reorderable)) 
     {
         update_settings_tab();
-        update_materials_income_tab();
+        //update_materials_income_tab();
         update_raids_income_tab();
-        update_total_income_tab();
+        //update_total_income_tab();
         
         ImGui.EndTabBar();
     }
