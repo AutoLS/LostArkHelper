@@ -8,12 +8,14 @@ Character_Page :: struct
     characters: [..] Character;
     selected_character: s32;
 
+    edit_name: *u8;
+
     last_reset_day: int = -1;
 }
 
 Character :: struct
 {
-    name: *u8;
+    name: string;
     item_level: float;
     checklist: [#run TODO_LIST.count] bool;
     is_purchasing_box: [..] bool;
@@ -22,12 +24,17 @@ Character :: struct
     notes: [65536] u8;
 }
 
+init_character_page :: (page: *Character_Page)
+{
+    add_character(page, "Character1", 0);
+    page.edit_name = alloc(17);
+    memset(page.edit_name, 0, 17);
+}
+
 add_character :: (using page: *Character_Page, name: string, item_level: float)
 {
     c: Character;
-    c.name = alloc(17);
-    memset(c.name, 0, 17);
-    memcpy(c.name, name.data, name.count);
+    c.name = name;
     c.item_level = item_level; 
     array_add(*characters, c);
 }
@@ -72,11 +79,12 @@ update_character_page :: (using page: *Character_Page)
     //TODO: Doesn't work
     //update_on_reset(page);
     current_character := *characters[selected_character];
+    edit_name = to_c_string(current_character.name);
 
     character_names: [..] *u8;
     character_names.allocator = temp;
 
-    for characters array_add(*character_names, it.name);
+    for characters array_add(*character_names, to_c_string(it.name));
 
     ImGui.SetNextItemWidth(150);
     combo_box("Character Select", character_names, *selected_character);
@@ -94,7 +102,8 @@ update_character_page :: (using page: *Character_Page)
 
     if ImGui.Button("Add new")
     {
-        add_character(page, tprint("Character%", characters.count+1), 0);
+        name := tprint("Character%", characters.count+1);
+        add_character(page, copy_string(name), 0);
         selected_character = xx (characters.count-1);
         set_unsaved();
     }
@@ -111,12 +120,15 @@ update_character_page :: (using page: *Character_Page)
     (
         "Character Name", 
         "Enter your character name", 
-        current_character.name, 16, 
+        edit_name, 16, 
         IMGUI_INPUT_TEXT_FLAGS.CharsNoBlank
     );
 
     if character_name_edited 
     {
+        //TODO: Does this leak memory? This seems like a bad idea..
+        if current_character.name then free(current_character.name);  
+        current_character.name = to_string(edit_name);
         set_unsaved();
     }
     ImGui.SetNextItemWidth(100);
