@@ -8,6 +8,10 @@ Log_Calculator_Data :: struct
     np_exchange: s32;
     up_exchange: s32;
 
+    pu: s32;
+    pr: s32;
+    total_powder: s32;
+
     status: Status_Code = .NONE;
 }
 
@@ -25,26 +29,52 @@ update_log_calculator :: ()
     if ImGui.Button("Calculate") 
     {
         n = 0;
-        while normal_mat >= 86 * n && uncommon_mat >= 45 * n
+        np_exchange = 0;
+        up_exchange = 0;
+        total_powder = 0;
+        while true
         {
-            shortfall: s32 = xx max(0, 33 * n - rare_mat);
-            powder_needed: s32 = shortfall * 10;
+            required_normal := 86 * (n+1);
+            required_uncommon := 45 * (n+1);
+            required_rare := 33 * (n+1);
 
-            np: s32 = (normal_mat - 86 * n) / 100 * 80;
-            up: s32 = (uncommon_mat - 45 * n) / 50 * 80;
-            powder_available :=  np + up;
-            
-            if powder_available < powder_needed 
+            if required_normal > normal_mat
             {
-                n -= 1;
                 break;
             }
 
-            n += 1;
-        }
+            uncommon_shortfall := ifx required_uncommon > uncommon_mat then required_uncommon - uncommon_mat else 0;
+            rare_shortfall := ifx required_rare > rare_mat then required_rare - rare_mat else 0;
 
-        np_exchange = (normal_mat - (86 * n)) / 100;
-        up_exchange = (uncommon_mat - (45 * n)) / 50;
+            pu =  cast(s32)ceil(uncommon_shortfall / 50.0) * 100;
+            pr = cast(s32)ceil(rare_shortfall / 10.0) * 100;
+            powder_needed := pu + pr;
+            
+            p_normal := ((normal_mat - required_normal) / 100) * 80;
+            p_normal = max(p_normal, 0);
+            p_uncommon := ((uncommon_mat - required_uncommon) / 50) * 80;
+            p_uncommon = max(p_uncommon, 0);
+            powder_available := p_normal + p_uncommon;
+
+            if powder_available >= powder_needed
+            {
+                n += 1;
+            }
+            else
+            {
+                required_normal = 86 * n;
+                required_uncommon = 45 * n;
+                required_rare = 33 * n;
+                p_normal = ((normal_mat - required_normal) / 100) * 80;
+                p_normal = max(p_normal, 0);
+                p_uncommon = ((uncommon_mat - required_uncommon) / 50) * 80;
+                p_uncommon = max(p_uncommon, 0);
+                total_powder = p_normal + p_uncommon;
+                np_exchange = max(p_normal / 80, 0);
+                up_exchange = max(p_uncommon / 80, 0);
+                break;
+            }
+        }
 
         status = .OK;
     }
@@ -54,6 +84,9 @@ update_log_calculator :: ()
         ImGui.Text("Maximum craftable: % Abidos", n * 10);
         ImGui.Text("# of Powder exchange for normal log: %x", np_exchange);
         ImGui.Text("# of Powder exchange for uncommon log: %x", up_exchange);
+        ImGui.Text("Powder available after exchange: %", total_powder);
+        ImGui.Text("Powder needed for uncommon: % (%x exchange)", pu, pu/100);
+        ImGui.Text("Powder needed for rare: % (%x exchange)", pr, pr/100);
     }
 
 }
