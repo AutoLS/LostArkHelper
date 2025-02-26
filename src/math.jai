@@ -130,3 +130,13 @@ round_real_to_int :: (x: float) -> int
 {
     return cast(int)(x + 0.5);
 }
+
+ceil_real_to_int :: (x: float) -> int
+{
+    result := cast(int)x;
+    if x == cast(float)result
+    {
+        return result;
+    }
+    return result + 1;
+}
