@@ -58,6 +58,13 @@ update_raids_settings_menu :: ()
 
         ImGui.OpenPopup("Create New Raid");
     }
+    ImGui.SameLine();
+    
+    if ImGui.Button("Delete")
+    {
+        array_unordered_remove_by_index(*raids, selected_raid);
+        set_unsaved();
+    }
 
     if ImGui.BeginPopupModal("Create New Raid", null, IMGUI_WINDOW_FLAGS.AlwaysAutoResize)
     {
