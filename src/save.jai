@@ -193,6 +193,9 @@ save_user_data :: (path: string)
     }
     write_entire_file("data/user.dat", *user_data_builder);
 
+    using lost_ark_helper.raids_settings;
+    json_write_file("data/raids_data.json", raids);
+
     set_saved();
 }
 
@@ -204,7 +207,7 @@ load_user_data_file :: ()
     {
         using lost_ark_helper.raids_settings;
         raids=, ok:, err := JSON.from_json_file([..] Raid, "data/raids_data.json");
-        if ok then total_gates = get_total_gates(raids);
+        if ok && raids.count > 0 then total_gates = get_total_gates(raids);
     }
 
     if file_exists("data/user.dat")
@@ -405,7 +408,10 @@ open_file :: (path: string) -> bool
         for i : 1 .. data.count-1
         {
             index := string_to_int(data[i]);
-            items[index] = true;
+            if items.count > index
+            {
+                items[index] = true;
+            }
         }
     }
 
