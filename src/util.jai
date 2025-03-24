@@ -5,6 +5,14 @@ Status_Code :: enum u32
     ERR;
 }
 
+copy_string :: (src: *u8) -> string
+{
+    cursor := 0;
+    dest := alloc_string(strlen(src));
+    memcpy(dest.data, src, strlen(src));
+    return dest;
+}
+
 strlen :: (s: *u8) -> s64
 {
     // Return the length of s, a C-style zero-terminated string.
