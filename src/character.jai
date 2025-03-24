@@ -6,6 +6,7 @@ TODO_LIST := string.["Guild donation", "Guild contribution", "Guild shop exchang
 Character_Page :: struct
 {
     characters: [..] Character;
+    notes_buffer: [65536] u8;
     selected_character: s32;
 
     edit_name: *u8;
@@ -21,7 +22,7 @@ Character :: struct
     is_purchasing_box: [..] bool;
     is_skipping: [..] bool;
     is_designated: bool;
-    notes: [65536] u8;
+    notes: string;
 }
 
 init_character_page :: (page: *Character_Page)
@@ -80,6 +81,11 @@ update_character_page :: (using page: *Character_Page)
     //update_on_reset(page);
     current_character := *characters[selected_character];
     edit_name = to_c_string(current_character.name);
+    if current_character.notes.count == 0
+    {
+        memset(notes_buffer.data, 0, 65536);
+    }
+    memcpy(notes_buffer.data, current_character.notes.data, current_character.notes.count);
 
     character_names: [..] *u8;
     character_names.allocator = temp;
@@ -150,6 +156,11 @@ update_character_page :: (using page: *Character_Page)
 
     ImGui.Text("Notes");
     notes_input_flags := IMGUI_INPUT_TEXT_FLAGS.AllowTabInput;
-    if ImGui.InputTextMultiline("##Notes", current_character.notes.data, current_character.notes.count, make_ImVec2(0, ImGui.GetTextLineHeight() * 16), notes_input_flags) then set_unsaved();
+    if ImGui.InputTextMultiline("##Notes", notes_buffer.data, notes_buffer.count, make_ImVec2(0, ImGui.GetTextLineHeight() * 16), notes_input_flags) 
+    {
+        set_unsaved();
+        if current_character.notes.data then free(current_character.notes);
+        current_character.notes = copy_string(notes_buffer.data);
+    }
 }
 
