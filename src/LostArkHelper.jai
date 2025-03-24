@@ -140,8 +140,8 @@ handle_file_action :: (is_new_file: bool, is_open_file: bool, is_save_file: bool
         }
         else
         {
-            open_file_dialogue();
-            //open_file_dialogue_json();
+            //open_file_dialogue();
+            open_file_dialogue_json();
             begin_open_file = false;
         }
     }

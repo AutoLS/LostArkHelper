@@ -158,7 +158,7 @@ main :: ()
 
 				if ImGui.MenuItem("Save as..") 
 				{
-					save_file_dialogue();
+					save_file_dialogue_json();
 				}
 			}
 			if ImGui.BeginMenu("Menu")
