@@ -34,14 +34,6 @@ JSON :: #import "JSON_Plus";
 
 APP_VERSION :: "v1.4.2";
 
-Lost_Ark_Raids :: enum u32
-{
-    Abyss_Dungeons;
-    Argos;
-    Valtan;
-    Vykas;
-}
-
 Lost_Ark_Tools :: enum u32
 {
     CHARACTER_CHECKLIST;
@@ -94,18 +86,6 @@ init_lost_ark_helper :: ()
 	init_income_menu_settings();
     init_bingo_board(*bingo_board);
 	load_user_data_file();
-}
-
-get_raid_type_from_string :: (raid_str: string) -> Lost_Ark_Raids
-{
-    if raid_str == 
-    {
-        case #run WEEKLY_RAID_LIST[0]; return .Abyss_Dungeons;
-        case #run WEEKLY_RAID_LIST[1]; return .Argos;
-        case #run WEEKLY_RAID_LIST[2]; return .Valtan;
-        case #run WEEKLY_RAID_LIST[3]; return .Vykas;
-        case; return .Abyss_Dungeons;
-    }
 }
 
 handle_file_action :: (is_new_file: bool, is_open_file: bool, is_save_file: bool)
