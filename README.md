@@ -6,13 +6,11 @@ This is a personal tool that I made for fun on my spare time
 **Current features:** <br />
 - Checklist & Notes
 - Income calculator (Materials income is currently not supported because community market api is taken down)  
-- Engraving builder
 - Customization preset converter
 - Logging convert calculator
 
 **Planned features:** <br />
 - Ability stone calculator
-- Improving engraving builder (Adding reduced abilities and stats)
 
 Here are some screenshots:<br />
 
