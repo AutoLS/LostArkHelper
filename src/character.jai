@@ -132,7 +132,7 @@ update_character_page :: (using page: *Character_Page)
 
     if character_name_edited 
     {
-        //TODO: Does this leak memory? This seems like a bad idea..
+        //TODO: Does this leak memory? This seems like a bad idea
         if current_character.name then free(current_character.name);  
         current_character.name = to_string(edit_name);
         set_unsaved();

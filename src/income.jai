@@ -201,49 +201,6 @@ get_ilv_breakpoint_index :: (item_level: float) -> int
     return ilv_index;
 }
 
-get_raid_income :: (raid_index: int, ilv: float, box: bool) -> float
-{
-    using lost_ark_helper.income_menu;
-    raid := RAID_LIST_STRINGS[raid_index];
-    if raid == 
-    {
-        case "Oreha's Well";
-        {
-            if ilv >= 1370 && ilv < 1415 then return raid_gold_income[raid_index]; else return 0;
-        }
-        case "Argos";
-        {
-            if ilv >= 1370 && ilv < 1475 then return raid_gold_income[raid_index]; else return 0;
-        }
-        case "Valtan N";
-        {
-            if ilv >= 1415 && ilv < 1445 then return raid_gold_income[raid_index]; else return 0;
-        }
-        case "Valtan H";
-        {
-            if ilv >= 1445 then return raid_gold_income[raid_index]; else return 0;
-        }
-        case "Vykas N";
-        {
-            if ilv >= 1430 && ilv < 1460 then return raid_gold_income[raid_index]; else return 0;
-        }
-        case "Vykas H";
-        {
-            if ilv >= 1460 then return raid_gold_income[raid_index]; else return 0;
-        }
-        case "Kakul-Saydon";
-        {
-            if ilv >= 1475 then return raid_gold_income[raid_index]; else return 0;
-        }
-        case "Brelshaza";
-        {
-            if ilv >= 1490 then return raid_gold_income[raid_index]; else return 0;
-        }
-        case;
-            return 0;
-    }
-}
-
 update_settings_tab :: ()
 {
     using lost_ark_helper.income_menu;
