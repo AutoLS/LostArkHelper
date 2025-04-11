@@ -24,6 +24,7 @@ LOA_Helper_Save_File :: struct
     recent_path: string;
     last_selected_character: s32;
     characters_data: [..] Character;
+    profit_calculator_data: Profit_Calculator_Data;
 }
 
 set_unsaved :: ()
@@ -280,6 +281,7 @@ save_file_json :: (path: string)
     loa_helper_save_file.recent_path = recent_file;
     loa_helper_save_file.last_selected_character = character_page.selected_character;
     loa_helper_save_file.characters_data = character_page.characters;
+    loa_helper_save_file.profit_calculator_data = log_calculator_data.profit_calculator_data;
 
     json_write_file(path, loa_helper_save_file);
     set_saved();
@@ -398,6 +400,7 @@ open_file_json :: (path: string) -> bool
             file_handler.recent_file = data.recent_path; 
             character_page.selected_character = data.last_selected_character;
             array_copy(*character_page.characters, data.characters_data);
+            log_calculator_data.profit_calculator_data = data.profit_calculator_data;
         }
         else
         {

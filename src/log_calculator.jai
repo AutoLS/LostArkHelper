@@ -1,5 +1,17 @@
+Profit_Calculator_Data :: struct 
+{
+    timber_price: s32;
+    tender_timber_price: s32;
+    abidos_timber_price: s32;
+    abidos_price: s32;
+
+    total_crafting_cost_reduction: s32;
+}
+
 Log_Calculator_Data :: struct
 {
+    profit_calculator_data: Profit_Calculator_Data;
+
     normal_mat: s32;
     uncommon_mat: s32;
     rare_mat: s32;
@@ -19,7 +31,22 @@ Log_Calculator_Data :: struct
 update_log_calculator :: ()
 {
     using lost_ark_helper.log_calculator_data;
+    using lost_ark_helper.log_calculator_data.profit_calculator_data;
 
+    ImGui.Text("Profit calculator settings");
+    ImGui.PushItemWidth(150);
+    if ImGui.InputInt("Timber price", *timber_price) set_unsaved();
+    if ImGui.InputInt("Tender Timber price", *tender_timber_price) set_unsaved();
+    if ImGui.InputInt("Abidos Timber price", *abidos_timber_price) set_unsaved();
+    if ImGui.InputInt("Abidos prices", *abidos_price) set_unsaved();
+    if ImGui.InputInt("Total crafting cost reduction", *total_crafting_cost_reduction)
+    {
+        total_crafting_cost_reduction = abs(total_crafting_cost_reduction);
+        set_unsaved();
+    }
+    ImGui.PopItemWidth();
+
+    ImGui.NewLine();
     ImGui.Text("Log Convert Calculator");
     ImGui.PushItemWidth(150);
     ImGui.InputInt("Normal Material", *normal_mat);
@@ -132,13 +159,27 @@ update_log_calculator :: ()
 
     if status == .OK 
     {
-        ImGui.Text("Maximum craftable: % Abidos", n * 10);
+        max_craft := n * 10;
+        ImGui.Text("Maximum craftable: % Abidos", max_craft);
         ImGui.Text("# of Uncommon to Normal exchanges: %x", u_n_exchange);
         ImGui.Text("# of Normal to Powder exchanges: %x", np_exchange);
         ImGui.Text("# of Uncommon to Powder exchanges: %x", up_exchange);
         ImGui.Text("Powder available after exchange: %", total_powder);
         ImGui.Text("Powder needed for uncommon: % (%x exchange)", pu, pu/100);
         ImGui.Text("Powder needed for rare: % (%x exchange)", pr, pr/100);
+
+        ImGui.NewLine();
+        ImGui.Separator();
+
+        base_cost: float = 401;
+        crafting_cost: float = n * (base_cost - (base_cost * (total_crafting_cost_reduction/100.0))) + (n * 86 * timber_price * 0.01) + (n * 45 * tender_timber_price * 0.01) + (n * 33 * abidos_timber_price * 0.01);
+
+        profit: float = cast(float)(abidos_price * max_craft);
+        tax: float = profit * 0.05;
+        total_profit: float = profit - tax - crafting_cost;
+
+        ImGui.Text("Crafting cost (Including materials cost): %g", cast(int)crafting_cost);
+        ImGui.Text("Profit: %g", cast(int)total_profit);
     }
 
 }

@@ -27,10 +27,7 @@ JSON :: #import "JSON_Plus";
 #load "itemAPI.jai";
 #load "bingo.jai";
 #load "log_calculator.jai";
-
-/* TODO: Maybe convert save files to json? 
-
-*/
+#load "stone_calculator.jai";
 
 APP_VERSION :: "v1.4.2";
 
