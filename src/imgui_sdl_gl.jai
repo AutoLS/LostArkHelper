@@ -79,7 +79,7 @@ ImGui_ImplSdl_RenderDrawLists :: (draw_data: *ImGui.ImDrawData) #c_call {
     // Setup viewport, orthographic projection matrix
     glViewport(0, 0, xx fb_width, xx fb_height);
 
-    new_context: Context;
+    new_context: #Context;
     push_context new_context {
         ortho_projection := orthographic_projection_matrix(0, io.DisplaySize.x, io.DisplaySize.y, 0, 0, 1);
         ortho_projection = transpose(ortho_projection);
