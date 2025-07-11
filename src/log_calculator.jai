@@ -172,14 +172,19 @@ update_log_calculator :: ()
         ImGui.Separator();
 
         base_cost: float = 401;
-        crafting_cost: float = n * (base_cost - (base_cost * (total_crafting_cost_reduction/100.0))) + (n * 86 * timber_price * 0.01) + (n * 45 * tender_timber_price * 0.01) + (n * 33 * abidos_timber_price * 0.01);
+        crafting_cost: float = n * (base_cost - (base_cost * (total_crafting_cost_reduction/100.0)));
+        materials_cost: float = (n * 86 * timber_price * 0.01) + (n * 45 * tender_timber_price * 0.01) + (n * 33 * abidos_timber_price * 0.01);
 
         profit: float = cast(float)(abidos_price * max_craft);
         tax: float = profit * 0.05;
         total_profit: float = profit - tax - crafting_cost;
 
-        ImGui.Text("Crafting cost (Including materials cost): %g", cast(int)crafting_cost);
+        ImGui.Text("Crafting cost: %g", cast(int)crafting_cost);
+        ImGui.Text("Materials cost: %g", cast(int)materials_cost);
+        ImGui.Text("Tax: %g", cast(int)tax);
+        ImGui.Text("Raw profit from abidos: %g", cast(int)profit);
         ImGui.Text("Profit: %g", cast(int)total_profit);
+        ImGui.Text("Profit if you buy trade mats: %g", cast(int)(total_profit - materials_cost));
     }
 
 }
